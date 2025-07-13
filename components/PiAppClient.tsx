@@ -15,7 +15,7 @@ export default function PiAppClient() {
     const [walletAddress, setWalletAddress] = useState("");
     const [adView, setAdView] = useState(false);
 
-    const handleLogin = async () => {
+    /*const handleLogin = async () => {
         const onIncompletePaymentFound = (payment: any) => {
             console.log("onIncompletePaymentFound", payment);
         };
@@ -32,7 +32,7 @@ export default function PiAppClient() {
         } catch (error) {
             console.error("Sign in error:", error);
         }
-    };
+    };*/
 
     const handleStage = (stage: string) => setAppStage(stage);
 

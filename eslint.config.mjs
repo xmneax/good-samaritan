@@ -17,18 +17,7 @@ const eslintConfig = [
             quotes: ["error", "double"],
             "prefer-arrow-callback": ["error"], //prefer arrow function
             "prefer-template": ["error"], //prefer template literal
-            "no-restricted-imports": [
-                "error",
-                {
-                    name: "next/link",
-                    message: "Please import from `@/i18n/navigation` instead.",
-                },
-                {
-                    name: "next/navigation",
-                    importNames: ["redirect", "permanentRedirect", "useRouter", "usePathname"],
-                    message: "Please import from `@/i18n/navigation` instead.",
-                },
-            ],
+            "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
         },
     }),
 ];

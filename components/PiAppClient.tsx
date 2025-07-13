@@ -11,10 +11,28 @@ import WelcomeModal from "@/components/WelcomeModal";
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
     const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error, ecosystem
+    const [user, setUser] = useState(null);
     const [walletAddress, setWalletAddress] = useState("");
     const [adView, setAdView] = useState(false);
 
-    const scopes = ["username", "payments", "wallet_address"];
+    const handleLogin = async () => {
+        const onIncompletePaymentFound = (payment: any) => {
+            console.log("onIncompletePaymentFound", payment);
+        };
+
+        try {
+            const scopes = ["username", "payments", "wallet_address"];
+            const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+
+            console.log("auth Result: ", authResult);
+            //signInUser(authResult);
+            setUser(authResult.user);
+
+            handleStage("walletInput");
+        } catch (error) {
+            console.error("Sign in error:", error);
+        }
+    };
 
     const handleStage = (stage: string) => setAppStage(stage);
 
@@ -51,7 +69,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="w-full flex flex-col items-center gap-y-4">
-                            <PrimaryButton onClick={() => handleStage("walletInput")}>
+                            <PrimaryButton onClick={handleLogin}>
                                 <div className="flex items-center justify-center gap-2">
                                     <Wallet size={20} />
                                     Login with Pi Network

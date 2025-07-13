@@ -18,6 +18,7 @@ const eslintConfig = [
             "prefer-arrow-callback": ["error"], //prefer arrow function
             "prefer-template": ["error"], //prefer template literal
             "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+            "@typescript-eslint/no-explicit-any": ["warn", { ignoreRestArgs: true }],
         },
     }),
 ];

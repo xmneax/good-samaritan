@@ -15,7 +15,7 @@ export const PiScript = () => {
                     // @ts-expect-error
                     window.Pi.init({
                         version: "2.0",
-                        sandbox: process.env.NODE_ENV !== "production",
+                        sandbox: true /*process.env.NODE_ENV !== "production"*/,
                     });
                 }
             }}

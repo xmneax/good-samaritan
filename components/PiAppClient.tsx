@@ -14,6 +14,8 @@ export default function PiAppClient() {
     const [walletAddress, setWalletAddress] = useState("");
     const [adView, setAdView] = useState(false);
 
+    const scopes = ["username", "payments", "wallet_address"];
+
     const handleStage = (stage: string) => setAppStage(stage);
 
     const handleWelcomeModalClose = () => {

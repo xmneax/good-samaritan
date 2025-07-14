@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { PrimaryButton } from "@/components/buttons/PrimaryButton";
+import { User } from "@/lib/mongodb/types";
+import { createPayment } from "@/lib/pibackend";
 
 type AdsSectionProps = {
+    user: User;
     setAppStage: (stage: string) => void;
+    setToast: (toast: { type: "success" | "error"; message: string }) => void;
 };
 
 const LoadingSpinner = () => (
@@ -12,10 +15,53 @@ const LoadingSpinner = () => (
     </div>
 );
 
-export const AdsSection = ({ setAppStage }: AdsSectionProps) => {
+const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTime: number }) => {
+    const progress = ((totalTime - timeLeft) / totalTime) * 100;
+
+    return (
+        <div className="flex items-center space-x-3 text-white opacity-50">
+            {/* Progress Bar */}
+            <div className="flex-1 h-2 bg-gray-600 bg-opacity-50 rounded-full overflow-hidden mx-2">
+                <div className="h-full bg-red-500 transition-all duration-1000 ease-linear rounded-full" style={{ width: `${progress}%` }} />
+            </div>
+
+            {/* Countdown Display */}
+            <div className="w-6 h-6 bg-gray-800 bg-opacity-80 flex justify-center items-center rounded-full flex-shrink-0">
+                <span className="text-xs font-mono font-bold">{timeLeft}</span>
+            </div>
+        </div>
+    );
+};
+
+export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState(30);
+    const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
+    const totalTime = 30;
+
+    const handleCreateTransaction = async () => {
+        setIsProcessingTransaction(true);
+
+        try {
+            const { success, message } = await createPayment(user.uid);
+
+            if (!success) {
+                setToast({ type: "error", message });
+
+                if (message === "You've already claimed your Pi. You can only claim once every 14 days.") return setAppStage("ecosystem");
+
+                return setAppStage("error");
+            }
+
+            setAppStage("success");
+        } catch (error) {
+            console.error("Transaction failed:", error);
+            setAppStage("error");
+        } finally {
+            setIsProcessingTransaction(false);
+        }
+    };
 
     useEffect(() => {
         // Simulate loading time (2 seconds)
@@ -37,11 +83,12 @@ export const AdsSection = ({ setAppStage }: AdsSectionProps) => {
         }
     }, [isLoading, adView, timeLeft]);
 
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    };
+    // Auto-trigger transaction when the timer reaches 0
+    useEffect(() => {
+        if (timeLeft === 0 && !isProcessingTransaction) {
+            void handleCreateTransaction();
+        }
+    }, [timeLeft, isProcessingTransaction]);
 
     return (
         <div className="relative flex-1 max-h-screen max-w-screen overflow-hidden">
@@ -52,13 +99,10 @@ export const AdsSection = ({ setAppStage }: AdsSectionProps) => {
                 </div>
             )}
 
-            {/* Floating Timer */}
+            {/* Floating Timer with Progress */}
             {!isLoading && adView && timeLeft > 0 && (
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black bg-opacity-70 px-4 py-2 rounded-full">
-                    <div className="flex items-center space-x-2 text-white">
-                        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                        <span className="text-sm font-mono">{formatTime(timeLeft)}</span>
-                    </div>
+                <div className="absolute top-4 left-4 right-4 z-50">
+                    <TimerWithProgress timeLeft={timeLeft} totalTime={totalTime} />
                 </div>
             )}
 
@@ -68,23 +112,20 @@ export const AdsSection = ({ setAppStage }: AdsSectionProps) => {
                     <div className="text-center text-gray-600">
                         <div className="text-lg">Preparing your ads...</div>
                     </div>
+                ) : isProcessingTransaction ? (
+                    <div className="text-center text-gray-800">
+                        <p className="text-2xl font-bold mb-4">Processing Transaction</p>
+                        <p>Sending Pi to your wallet. Please hold...</p>
+                    </div>
                 ) : (
                     <div className="text-center text-gray-800">
                         <div className="text-2xl font-bold mb-4">Advertisement</div>
                         <div className="text-lg">Your ad content would appear here</div>
                         {timeLeft > 0 && <div className="mt-4 text-sm text-gray-600">Please wait {timeLeft} seconds before continuing</div>}
+                        {timeLeft === 0 && !isProcessingTransaction && <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>}
                     </div>
                 )}
             </div>
-
-            {/* Continue Button */}
-            {timeLeft === 0 && (
-                <div className="absolute bottom-4 left-0 right-0">
-                    <PrimaryButton onClick={() => setAppStage("success")} disabled={timeLeft > 0}>
-                        {timeLeft > 0 ? `Continue (${timeLeft}s)` : "Continue"}
-                    </PrimaryButton>
-                </div>
-            )}
         </div>
     );
 };

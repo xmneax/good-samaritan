@@ -150,19 +150,7 @@ export default function PiAppClient() {
                 );
 
             case "adView":
-                return (
-                    <AdsSection setAppStage={setAppStage} />
-                    /*<div className="relative flex-1 max-h-screen max-w-screen overflow-hidden">
-                        <div className="h-full bg-[rgba(255,255,255,0.2)]">Ads goes here</div>
-                        {adView && (
-                            <div className="absolute bottom-4 left-0 right-0">
-                                <PrimaryButton onClick={() => handleStage("success")} disabled={!adView}>
-                                    Continue
-                                </PrimaryButton>
-                            </div>
-                        )}
-                    </div>*/
-                );
+                return <AdsSection user={user as User} setAppStage={setAppStage} setToast={setToast} />;
 
             case "success":
                 return (
@@ -248,13 +236,13 @@ export default function PiAppClient() {
 
         const timer = setTimeout(() => {
             setToast(null);
-        }, 3000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, [toast]);
 
     return (
-        <main className={clsx("min-h-screen flex", appStage !== "adView" ? "items-center justify-center" : "p-2")}>
+        <main className={clsx("min-h-screen flex", appStage !== "adView" ? "items-center justify-center" : null)}>
             {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
             {toast && (
                 <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">

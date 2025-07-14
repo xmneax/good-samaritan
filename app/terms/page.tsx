@@ -13,7 +13,7 @@ export default function Terms() {
             <ul className="list-disc list-inside">
                 <li>Login via valid Pi account.</li>
                 <li>Wallet must match the authenticated Pi account.</li>
-                <li>Limit: once every 60 days per wallet.</li>
+                <li>Limit: once every 14 days per wallet.</li>
             </ul>
 
             <h2 className="mt-4 font-semibold">3. Use of Ads</h2>

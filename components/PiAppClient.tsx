@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { User } from "@/lib/mongodb/types";
@@ -10,6 +10,7 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
 import { signIn } from "@/app/actions";
+import { AdsSection } from "@/components/AdsSection";
 
 type Toast = {
     type: "success" | "error";
@@ -23,7 +24,12 @@ export default function PiAppClient() {
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
-    const [adView, setAdView] = useState(true);
+
+    const handleStage = (stage: string) => setAppStage(stage);
+
+    const handleWelcomeModalClose = () => {
+        setShowWelcomeModal(false);
+    };
 
     const handleLogin = async () => {
         if (user) return handleStage("walletInput");
@@ -57,10 +63,19 @@ export default function PiAppClient() {
         }
     };
 
-    const handleStage = (stage: string) => setAppStage(stage);
+    const handleWalletAddress = async () => {
+        setIsLoading(true);
 
-    const handleWelcomeModalClose = () => {
-        setShowWelcomeModal(false);
+        if (!walletAddress || !walletAddress.startsWith("G")) {
+            setIsLoading(false);
+            return setToast({ type: "error", message: "Invalid wallet address. Must start with 'G'." });
+        }
+
+        //todo - verify wallet address exist in the Horizon
+        // todo - check if the wallet has claimed in the past 14 days
+
+        setIsLoading(false);
+        handleStage("adView");
     };
 
     const renderAppContent = () => {
@@ -73,7 +88,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-4xl font-bold">Good Samaritan</h1>
+                            <h1>Good Samaritan</h1>
 
                             <p className="text-center font-medium">Need 0.01 Pi to move your lockups? We&#39;ve got you covered!</p>
                         </div>
@@ -86,7 +101,7 @@ export default function PiAppClient() {
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-4xl font-bold">Login with Pi</h1>
+                            <h1>Login with Pi</h1>
 
                             <p className="text-center font-medium">Connect your Pi Network account to continue</p>
                         </div>
@@ -99,7 +114,9 @@ export default function PiAppClient() {
                                 </div>
                             </PrimaryButton>
 
-                            <SecondaryButton onClick={() => handleStage("welcome")}>Back</SecondaryButton>
+                            <SecondaryButton onClick={() => handleStage("ecosystem")} disabled={isLoading}>
+                                Cancel
+                            </SecondaryButton>
                         </div>
                     </div>
                 );
@@ -108,29 +125,43 @@ export default function PiAppClient() {
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-4xl font-bold">Wallet Address</h1>
+                            <h1>Wallet Address</h1>
                             <p className="text-center font-medium">Pi Wallet Address</p>
                         </div>
 
-                        <div className="w-full flex flex-col items-center gap-y-4">
-                            <PrimaryButton onClick={() => handleStage("adView")}>Confirm Address</PrimaryButton>
+                        <input
+                            type="text"
+                            className="w-full bg-white p-3 rounded-lg text-black"
+                            placeholder="Enter your wallet address"
+                            value={walletAddress}
+                            onChange={(e) => setWalletAddress(e.target.value.trim().toUpperCase())}
+                        />
 
-                            <SecondaryButton onClick={() => handleStage("welcome")}>Back</SecondaryButton>
+                        <div className="w-full flex flex-col items-center gap-y-4">
+                            <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
+                                Confirm Address
+                            </PrimaryButton>
+
+                            <SecondaryButton onClick={() => handleStage("ecosystem")} disabled={isLoading}>
+                                Cancel
+                            </SecondaryButton>
                         </div>
                     </div>
                 );
 
             case "adView":
                 return (
-                    <div className="relative flex-1 max-h-screen max-w-screen overflow-hidden">
+                    <AdsSection setAppStage={setAppStage} />
+                    /*<div className="relative flex-1 max-h-screen max-w-screen overflow-hidden">
                         <div className="h-full bg-[rgba(255,255,255,0.2)]">Ads goes here</div>
-
-                        <div className="absolute bottom-4 left-0 right-0">
-                            <PrimaryButton onClick={() => handleStage("success")} disabled={!adView}>
-                                Continue
-                            </PrimaryButton>
-                        </div>
-                    </div>
+                        {adView && (
+                            <div className="absolute bottom-4 left-0 right-0">
+                                <PrimaryButton onClick={() => handleStage("success")} disabled={!adView}>
+                                    Continue
+                                </PrimaryButton>
+                            </div>
+                        )}
+                    </div>*/
                 );
 
             case "success":
@@ -141,7 +172,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-4xl font-bold">Transfer Complete!</h1>
+                            <h1>Transfer Complete!</h1>
                             <p className="text-center font-medium">0.01 Pi has been sent to your wallet</p>
                         </div>
 
@@ -159,7 +190,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-4xl font-bold">Error Occurred!</h1>
+                            <h1>Error Occurred!</h1>
                             <p className="text-center font-medium">The blockchain is busy right now. Please try again!</p>
                         </div>
 
@@ -173,7 +204,7 @@ export default function PiAppClient() {
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-8 p-4">
                         <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-3xl font-bold">Explore the Ecosystem</h1>
+                            <h1 className="text-2xl font-bold">Explore the Ecosystem</h1>
                             <p className="text-center font-medium">Discover more apps by boostr.space</p>
                         </div>
 
@@ -202,6 +233,8 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">Help us keep this service free for all pioneers</p>
                             <PrimaryButton onClick={() => handleStage("ecosystem")}>Donate</PrimaryButton>
                         </div>
+
+                        <SecondaryButton onClick={() => handleStage("welcome")}>Start Over</SecondaryButton>
                     </div>
                 );
 
@@ -225,7 +258,7 @@ export default function PiAppClient() {
             {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
             {toast && (
                 <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">
-                    <p className={clsx("text-sm font-semibold py-2 px-6 rounded-sm leading-relaxed tracking-wide", toast.type === "error" ? "bg-red-600" : "bg-green-600")}>
+                    <p className={clsx("mx-4 text-sm font-semibold py-2 px-6 rounded-sm leading-relaxed tracking-wide", toast.type === "error" ? "bg-red-600" : "bg-green-600")}>
                         {toast.message}
                     </p>
                 </div>

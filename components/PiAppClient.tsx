@@ -1,37 +1,60 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { PrimaryButton } from "@/components/buttons/PrimaryButton";
-import { useState } from "react";
-import { Check, Wallet, X } from "lucide-react";
-import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { clsx } from "clsx";
+import { User } from "@/lib/mongodb/types";
+import { Check, Loader2, Wallet, X } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
+import { PrimaryButton } from "@/components/buttons/PrimaryButton";
+import { SecondaryButton } from "@/components/buttons/SecondaryButton";
+import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
+import { signIn } from "@/app/actions";
+
+type Toast = {
+    type: "success" | "error";
+    message: string;
+};
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
     const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error, ecosystem
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [toast, setToast] = useState<Toast | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
-    const [adView, setAdView] = useState(false);
+    const [adView, setAdView] = useState(true);
 
     const handleLogin = async () => {
-        /*        const onIncompletePaymentFound = (payment: any) => {
-            console.log("onIncompletePaymentFound", payment);
-        };
+        if (user) return handleStage("walletInput");
 
         try {
+            setIsLoading(true);
             const scopes = ["username", "payments", "wallet_address"];
-            const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
 
-            console.log("auth Result: ", authResult);
-            //signInUser(authResult);
-            setUser(authResult.user);
+            const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Login request timed out. Please try again using the Pi Browser.")), 15000));
 
+            // Add timeout to factor in the user not using Pi Browser
+            const { accessToken } = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
+
+            const response = await signIn(accessToken);
+
+            if (!response.success) {
+                setIsLoading(false);
+                return setToast({ type: "error", message: response.message });
+            }
+
+            setIsLoading(false);
+            setUser(response.data as User);
             handleStage("walletInput");
         } catch (error) {
             console.error("Sign in error:", error);
-        }*/
+            setIsLoading(false);
+            setToast({
+                type: "error",
+                message: error instanceof Error ? error.message : "An error occurred while signing in. Please try again!",
+            });
+        }
     };
 
     const handleStage = (stage: string) => setAppStage(stage);
@@ -69,10 +92,10 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="w-full flex flex-col items-center gap-y-4">
-                            <PrimaryButton onClick={handleLogin}>
+                            <PrimaryButton onClick={handleLogin} disabled={isLoading}>
                                 <div className="flex items-center justify-center gap-2">
-                                    <Wallet size={20} />
-                                    Login with Pi Network
+                                    {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Wallet size={20} />}
+                                    {isLoading ? "Signing in..." : "Login with Pi Network"}
                                 </div>
                             </PrimaryButton>
 
@@ -187,9 +210,26 @@ export default function PiAppClient() {
         }
     };
 
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(() => {
+            setToast(null);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [toast]);
+
     return (
         <main className={clsx("min-h-screen flex", appStage !== "adView" ? "items-center justify-center" : "p-2")}>
             {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
+            {toast && (
+                <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">
+                    <p className={clsx("text-sm font-semibold py-2 px-6 rounded-sm leading-relaxed tracking-wide", toast.type === "error" ? "bg-red-600" : "bg-green-600")}>
+                        {toast.message}
+                    </p>
+                </div>
+            )}
             {renderAppContent()}
         </main>
     );

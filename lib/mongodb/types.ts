@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 export interface User {
     uid: string;
     username: string;
-    wallet: string;
+    wallet?: string;
 }
 
 export interface BaseTransaction extends User {

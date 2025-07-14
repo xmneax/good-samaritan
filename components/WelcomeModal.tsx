@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface WelcomeModalProps {
     open: boolean;
@@ -8,7 +8,7 @@ interface WelcomeModalProps {
 export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-lg bg-gray-100">
+            <DialogContent className="max-h-[90vh] overflow-y-auto max-w-lg bg-gray-100">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-gray-800 text-center">Welcome, Good Samaritan!</DialogTitle>
                 </DialogHeader>
@@ -39,9 +39,9 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
                 </div>
 
                 <DialogFooter className="flex justify-center items-center">
-                    <button onClick={onClose} className="!w-fit bg-red-400 !text-white py-2 px-6 cursor-pointer rounded-md font-semibold">
-                        Close
-                    </button>
+                    <DialogClose asChild>
+                        <button className="!w-fit bg-red-400 !text-white py-2 px-6 cursor-pointer rounded-md font-semibold">Close</button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

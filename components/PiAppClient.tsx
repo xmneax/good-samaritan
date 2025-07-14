@@ -134,7 +134,7 @@ export default function PiAppClient() {
                             className="w-full bg-white p-3 rounded-lg text-black"
                             placeholder="Enter your wallet address"
                             value={walletAddress}
-                            onChange={(e) => setWalletAddress(e.target.value.trim().toUpperCase())}
+                            onChange={(e) => setWalletAddress(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
                         />
 
                         <div className="w-full flex flex-col items-center gap-y-4">
@@ -202,8 +202,8 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">Buy Gift cards, Mobile Reload, Utility Payment and eSIM</p>
 
                             <p className="text-center font-medium">Spend your Pi without worrying about exchanges or taxes!</p>
-                            <SecondaryButton onClick={() => handleStage("ecosystem")} className="border-none">
-                                Explore Boostr
+                            <SecondaryButton className="border-none">
+                                <a href="https://boostr.space">Explore Boostr</a>
                             </SecondaryButton>
                         </div>
 

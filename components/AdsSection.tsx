@@ -36,9 +36,9 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
 export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(30);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
-    const totalTime = 30;
+    const totalTime = 5;
 
     const handleCreateTransaction = async () => {
         setIsProcessingTransaction(true);
@@ -68,7 +68,7 @@ export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => 
         const loadingTimer = setTimeout(() => {
             setIsLoading(false);
             setAdView(true);
-        }, 2000);
+        }, 1000);
 
         return () => clearTimeout(loadingTimer);
     }, []);

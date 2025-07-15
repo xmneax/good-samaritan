@@ -126,7 +126,7 @@ export default function PiAppClient() {
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Wallet Address</h1>
-                            <p className="text-center font-medium">Pi Wallet Address</p>
+                            <p className="text-center font-medium">Welcome, {user?.username}</p>
                         </div>
 
                         <input

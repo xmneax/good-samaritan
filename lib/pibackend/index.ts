@@ -54,6 +54,8 @@ export const createPayment = async (uid: string) => {
             message: "Pi sent to the user's wallet",
         };
     } catch (err: any) {
+        console.error("Payment creation error:", err);
+
         return {
             success: false,
             message: err?.message || "Unexpected error occurred",

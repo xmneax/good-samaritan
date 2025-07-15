@@ -66,10 +66,10 @@ export default function PiAppClient() {
     const handleWalletAddress = async () => {
         setIsLoading(true);
 
-        if (!walletAddress || !walletAddress.startsWith("G")) {
+        /*if (!walletAddress || !walletAddress.startsWith("G")) {
             setIsLoading(false);
             return setToast({ type: "error", message: "Invalid wallet address. Must start with 'G'." });
-        }
+        }*/
 
         //todo - verify wallet address exist in the Horizon
         // todo - check if the wallet has claimed in the past 14 days

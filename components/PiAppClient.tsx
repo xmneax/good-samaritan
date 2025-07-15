@@ -20,7 +20,7 @@ type Toast = {
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error, ecosystem
+    const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -124,7 +124,7 @@ export default function PiAppClient() {
 
             case "walletInput":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
+                    <div className="w-full max-w-md flex flex-col gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Wallet Address</h1>
                             <p className="text-center font-medium">Welcome, {user?.username}</p>
@@ -142,10 +142,6 @@ export default function PiAppClient() {
                             <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
                                 Confirm Address
                             </PrimaryButton>
-
-                            <SecondaryButton onClick={() => handleStage("ecosystem")} disabled={isLoading}>
-                                Cancel
-                            </SecondaryButton>
                         </div>
                     </div>
                 );
@@ -167,7 +163,9 @@ export default function PiAppClient() {
 
                         <div className=" w-full h-50 bg-[rgba(255,255,255,0.2)] rounded-xl flex justify-center items-center">Place ads here</div>
 
-                        <PrimaryButton onClick={() => handleStage("ecosystem")}>Continue</PrimaryButton>
+                        <PrimaryButton>
+                            <Link href="/ecosystem">Continue</Link>
+                        </PrimaryButton>
                     </div>
                 );
 
@@ -185,47 +183,9 @@ export default function PiAppClient() {
 
                         <div className=" w-full h-50 bg-[rgba(255,255,255,0.2)] rounded-xl flex justify-center items-center">Place ads here</div>
 
-                        <PrimaryButton onClick={() => handleStage("welcome")}>Try Again</PrimaryButton>
-                    </div>
-                );
-
-            case "ecosystem":
-                return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-8 p-4">
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1 className="text-2xl font-bold">Explore the Ecosystem</h1>
-                            <p className="text-center font-medium">Discover more apps by boostr.space</p>
-                        </div>
-
-                        <div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
-                            <h2 className="font-bold text-xl">🚀 Boostr.space</h2>
-
-                            <p className="text-center font-medium">Buy Gift cards, Mobile Reload, Utility Payment and eSIM</p>
-
-                            <p className="text-center font-medium">Spend your Pi without worrying about exchanges or taxes!</p>
-                            <SecondaryButton className="border-none">
-                                <a href="https://boostr.space">Explore Boostr</a>
-                            </SecondaryButton>
-                        </div>
-
-                        <div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
-                            <h2 className="font-bold text-xl">🛍️ Pi Marketplace</h2>
-
-                            <p className="text-center font-medium">Buy and sell with Pi in a secure marketplace</p>
-
-                            <SecondaryButton className="border-none">Coming Soon</SecondaryButton>
-                        </div>
-
-                        <div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
-                            <h2 className="font-bold text-xl">Feeling grateful?</h2>
-
-                            <p className="text-center font-medium">Help us keep this service free for all pioneers</p>
-                            <PrimaryButton>
-                                <Link href="/donation">Donate</Link>
-                            </PrimaryButton>
-                        </div>
-
-                        <SecondaryButton onClick={() => handleStage("welcome")}>Start Over</SecondaryButton>
+                        <PrimaryButton>
+                            <Link href="/ecosystem">Continue</Link>
+                        </PrimaryButton>
                     </div>
                 );
 
@@ -245,7 +205,7 @@ export default function PiAppClient() {
     }, [toast]);
 
     return (
-        <main className={clsx("min-h-screen flex", appStage !== "adView" ? "items-center justify-center" : null)}>
+        <div className="w-full flex justify-center items-center">
             {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
             {toast && (
                 <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">
@@ -255,6 +215,6 @@ export default function PiAppClient() {
                 </div>
             )}
             {renderAppContent()}
-        </main>
+        </div>
     );
 }

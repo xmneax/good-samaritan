@@ -20,12 +20,10 @@ const DonationPage = () => {
     };
 
     return (
-        <div className="min-h-screen max-w-md mx-auto p-4 flex flex-col justify-between space-y-6">
+        <div className="max-w-md mx-auto p-4 flex flex-col justify-between space-y-6">
             <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Help Us Help Others</h2>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                    Your donation helps pioneers unlock their Pi and keeps our service free for everyone. Every contribution makes a difference.
-                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Donation</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">Your donation helps pioneers unlock their Pi and keeps our service free for everyone.</p>
             </div>
 
             <div className="flex-1">
@@ -76,12 +74,6 @@ const DonationPage = () => {
                         Donate
                     </PrimaryButton>
                 </div>
-            </div>
-
-            <div className="text-center pb-6">
-                <p className="text-xs">
-                    Need help? • Contact: <a href="mailto:support@goodsamaritan.pi">support@goodsamaritan.pi</a>
-                </p>
             </div>
         </div>
     );

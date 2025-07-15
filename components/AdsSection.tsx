@@ -36,20 +36,18 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
 export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
-    const totalTime = 5;
+    const totalTime = 30;
 
     const handleCreateTransaction = async () => {
         setIsProcessingTransaction(true);
 
         try {
-            const { success, message } = await createPayment(user.uid);
+            const { success, message } = await createPayment(user?.uid);
 
             if (!success) {
                 setToast({ type: "error", message });
-
-                if (message === "You've already claimed your Pi. You can only claim once every 14 days.") return setAppStage("ecosystem");
 
                 return setAppStage("error");
             }
@@ -91,7 +89,7 @@ export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => 
     }, [timeLeft, isProcessingTransaction]);
 
     return (
-        <div className="relative flex-1 max-h-screen max-w-screen overflow-hidden">
+        <div className="fixed inset-0 z-[9999] bg-[linear-gradient(135deg,#f093fb_0%,#f5576c_100%)] w-screen h-screen flex flex-col overflow-hidden">
             {/* Floating Loading Indicator */}
             {isLoading && (
                 <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black bg-opacity-70 px-4 py-2 rounded-full">

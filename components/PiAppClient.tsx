@@ -115,8 +115,8 @@ export default function PiAppClient() {
                                 </div>
                             </PrimaryButton>
 
-                            <SecondaryButton onClick={() => handleStage("ecosystem")} disabled={isLoading}>
-                                Cancel
+                            <SecondaryButton disabled={isLoading}>
+                                <Link href="/ecosystem">Cancel</Link>
                             </SecondaryButton>
                         </div>
                     </div>

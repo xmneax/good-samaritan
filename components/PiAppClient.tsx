@@ -66,10 +66,10 @@ export default function PiAppClient() {
     const handleWalletAddress = async () => {
         setIsLoading(true);
 
-        /*if (!walletAddress || !walletAddress.startsWith("G")) {
+        if (!walletAddress || !walletAddress.startsWith("G")) {
             setIsLoading(false);
             return setToast({ type: "error", message: "Invalid wallet address. Must start with 'G'." });
-        }*/
+        }
 
         //todo - verify wallet address exist in the Horizon
         // todo - check if the wallet has claimed in the past 14 days
@@ -126,7 +126,7 @@ export default function PiAppClient() {
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Wallet Address</h1>
-                            <p className="text-center font-medium">Pi Wallet Address</p>
+                            <p className="text-center font-medium">Welcome, {user?.username}</p>
                         </div>
 
                         <input

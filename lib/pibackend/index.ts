@@ -12,7 +12,7 @@ const pi = new PiNetwork(apiKey, walletPrivateSeed);
 
 export const createPayment = async (uid: string) => {
     try {
-        const { transactionCollection } = await getCollections();
+        /*        const { transactionCollection } = await getCollections();
 
         // Find transaction by user_uid (based on your sample doc)
         const existingTransaction = await transactionCollection.findOne({
@@ -30,7 +30,7 @@ export const createPayment = async (uid: string) => {
                     message: "You've already claimed your Pi. You can only claim once every 14 days.",
                 };
             }
-        }
+        }*/
 
         const paymentData = {
             uid,
@@ -47,13 +47,15 @@ export const createPayment = async (uid: string) => {
 
         const completedPayment = await pi.completePayment(paymentId, txid);
 
-        await transactionCollection.insertOne(completedPayment);
-
+        //await transactionCollection.insertOne(completedPayment);
+        console.log(completedPayment);
         return {
             success: true,
             message: "Pi sent to the user's wallet",
         };
     } catch (err: any) {
+        console.error("Payment creation error:", err);
+
         return {
             success: false,
             message: err?.message || "Unexpected error occurred",

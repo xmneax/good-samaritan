@@ -40,6 +40,7 @@ export async function onReadyForServerCompletion(paymentId: string, txid: string
         status: "completed",
         paymentId: data.identifier,
         link: data.transaction._link,
+        createdAt: new Date(),
     });
 
     console.log("Server complete: ", data);

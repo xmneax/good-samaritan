@@ -11,4 +11,5 @@ export interface Donation {
     status: "pending" | "completed" | "cancelled";
     paymentId: string;
     link: string;
+    createdAt: Date;
 }

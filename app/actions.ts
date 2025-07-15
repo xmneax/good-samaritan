@@ -7,10 +7,8 @@ interface SignInResult<T = unknown> {
 }
 
 export async function signIn(accessToken: string): Promise<SignInResult> {
-    const apiUrl = process.env.PI_API_URL!;
-
     try {
-        const response = await fetch(`${apiUrl}/me`, {
+        const response = await fetch("https://api.minepi.com/v2/me", {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

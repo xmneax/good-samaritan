@@ -11,6 +11,7 @@ import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
 import { signIn } from "@/app/actions";
 import { AdsSection } from "@/components/AdsSection";
+import Link from "next/link";
 
 type Toast = {
     type: "success" | "error";
@@ -219,7 +220,9 @@ export default function PiAppClient() {
                             <h2 className="font-bold text-xl">Feeling grateful?</h2>
 
                             <p className="text-center font-medium">Help us keep this service free for all pioneers</p>
-                            <PrimaryButton onClick={() => handleStage("ecosystem")}>Donate</PrimaryButton>
+                            <PrimaryButton>
+                                <Link href="/donation">Donate</Link>
+                            </PrimaryButton>
                         </div>
 
                         <SecondaryButton onClick={() => handleStage("welcome")}>Start Over</SecondaryButton>

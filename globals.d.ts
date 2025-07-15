@@ -46,6 +46,7 @@ declare global {
                     //wallet_address: string;
                 };
             }>;
+            createPayment: (paymentData: { amount: number; memo: string; metadata: object }, callbacks) => Promise<PaymentDTO>;
         };
     }
 }

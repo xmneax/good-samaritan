@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/mongodb/connection";
-import { User } from "@/lib/mongodb/types";
+import { User, Donation } from "@/lib/mongodb/types";
 import { Db } from "mongodb";
 import { PaymentDTO } from "@/globals";
 
@@ -9,6 +9,7 @@ export async function getCollections() {
 
     return {
         userCollection: db.collection<User>("users"),
+        donationCollection: db.collection<Donation>("donations"),
         transactionCollection: db.collection<PaymentDTO>("transactions"),
     };
 }

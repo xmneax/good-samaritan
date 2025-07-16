@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { User } from "@/lib/mongodb/types";
-import { Check, Loader2, Wallet, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
@@ -108,7 +108,7 @@ export default function PiAppClient() {
                     </div>
                 );
 
-            case "login":
+            /*case "login":
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
@@ -130,7 +130,7 @@ export default function PiAppClient() {
                             </SecondaryButton>
                         </div>
                     </div>
-                );
+                );*/
 
             case "walletInput":
                 return (

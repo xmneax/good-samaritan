@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { createPayment } from "@/lib/pibackend";
 import { createTransaction } from "@/lib/stellar";
 
 type AdsSectionProps = {

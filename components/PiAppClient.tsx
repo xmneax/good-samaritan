@@ -178,7 +178,11 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">0.01 Pi has been sent to your wallet</p>
                         </div>
 
-                        <div className=" w-full h-50 bg-[rgba(255,255,255,0.2)] rounded-xl flex justify-center items-center">Place ads here</div>
+                        <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
+                            <a href="https://boostr.space">
+                                <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
+                            </a>
+                        </div>
 
                         <PrimaryButton>
                             <Link href="/ecosystem">Continue</Link>
@@ -198,7 +202,11 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">The blockchain is busy right now. Please try again!</p>
                         </div>
 
-                        <div className=" w-full h-50 bg-[rgba(255,255,255,0.2)] rounded-xl flex justify-center items-center">Place ads here</div>
+                        <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
+                            <a href="https://boostr.space">
+                                <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
+                            </a>
+                        </div>
 
                         <PrimaryButton>
                             <Link href="/ecosystem">Continue</Link>

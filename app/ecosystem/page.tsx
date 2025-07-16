@@ -22,13 +22,13 @@ export default function Ecosystem() {
                 </SecondaryButton>
             </div>
 
-            <div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
+            {/*<div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
                 <h2 className="font-bold text-xl">🛍️ Pi Marketplace</h2>
 
                 <p className="text-center font-medium">Buy and sell with Pi in a secure marketplace</p>
 
                 <SecondaryButton className="border-none">Coming Soon</SecondaryButton>
-            </div>
+            </div>*/}
 
             <div className=" w-full bg-[rgba(255,255,255,0.2)] rounded-xl flex flex-col justify-center items-center gap-y-4 p-4">
                 <h2 className="font-bold text-xl">Feeling grateful?</h2>

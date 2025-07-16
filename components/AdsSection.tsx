@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createTransaction } from "@/lib/stellar";
+import Image from "next/image";
 
 type AdsSectionProps = {
     walletAddress: string;
@@ -35,11 +36,13 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
 export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
-    const totalTime = 5;
+    const totalTime = 30;
 
     const handleCreateTransaction = async () => {
+        if (!walletAddress) return;
+
         setIsProcessingTransaction(true);
 
         try {
@@ -88,7 +91,7 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
     }, [timeLeft, isProcessingTransaction]);
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-[linear-gradient(135deg,#f093fb_0%,#f5576c_100%)] w-screen h-screen flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-[linear-gradient(135deg,#f093fb_0%,#f5576c_100%)] w-screen h-screen flex flex-col overflow-hidden">
             {/* Floating Loading Indicator */}
             {isLoading && (
                 <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black bg-opacity-70 px-4 py-2 rounded-full">
@@ -98,7 +101,8 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
 
             {/* Floating Timer with Progress */}
             {!isLoading && adView && timeLeft > 0 && (
-                <div className="absolute top-4 left-4 right-4 z-50">
+                <div className="z-50 p-2">
+                    {timeLeft > 0 && <div className="mx-2 text-sm text-gray-600">Please wait {timeLeft} seconds before continuing</div>}
                     <TimerWithProgress timeLeft={timeLeft} totalTime={totalTime} />
                 </div>
             )}
@@ -114,12 +118,20 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
                         <p className="text-2xl font-bold mb-4">Processing Transaction</p>
                         <p>Sending Pi to your wallet. Please hold...</p>
                     </div>
-                ) : (
-                    <div className="text-center text-gray-800">
+                ) : /*                    <div className="text-center text-gray-800">
                         <div className="text-2xl font-bold mb-4">Advertisement</div>
                         <div className="text-lg">Your ad content would appear here</div>
                         {timeLeft > 0 && <div className="mt-4 text-sm text-gray-600">Please wait {timeLeft} seconds before continuing</div>}
                         {timeLeft === 0 && !isProcessingTransaction && <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>}
+                    </div>*/
+
+                timeLeft === 0 && !isProcessingTransaction ? (
+                    <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>
+                ) : (
+                    <div onClick={handleCreateTransaction} className="relative w-full h-full">
+                        <a href="https://boostr.space">
+                            <Image src="/boostr_banner.webp" alt="visit boostr.space on Pi browser" fill />
+                        </a>
                     </div>
                 )}
             </div>

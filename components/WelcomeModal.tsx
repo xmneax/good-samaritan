@@ -10,7 +10,7 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="max-h-[90vh] overflow-y-auto max-w-lg bg-gray-100">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-gray-800 text-center">Welcome, Good Samaritan!</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold text-gray-800 text-center">Welcome, Pioneer!</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
@@ -22,9 +22,9 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
                     <p className="text-gray-700 leading-relaxed">Here&#39;s how you can get your lockups released:</p>
 
                     <ol className="list-decimal list-inside text-gray-700 space-y-2">
-                        <li>
+                        {/*                        <li>
                             <span className="font-semibold">Login with Pi Account:</span> Securely connect your Pi account.
-                        </li>
+                        </li>*/}
                         <li>
                             <span className="font-semibold">Enter Wallet Address:</span> Provide your Pi wallet address for verification.
                         </li>

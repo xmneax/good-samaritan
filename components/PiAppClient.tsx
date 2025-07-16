@@ -179,7 +179,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href="https://boostr.space">
+                            <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
                                 <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>
@@ -203,7 +203,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href="https://boostr.space">
+                            <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
                                 <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>

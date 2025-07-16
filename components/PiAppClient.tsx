@@ -14,7 +14,7 @@ import { AdsSection } from "@/components/AdsSection";
 import Link from "next/link";
 import { checkWalletAddress } from "@/lib/stellar";
 
-type Toast = {
+export type Toast = {
     type: "success" | "error";
     message: string;
 };

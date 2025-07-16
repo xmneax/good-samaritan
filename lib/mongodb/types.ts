@@ -4,6 +4,14 @@ export interface User {
     wallet?: string;
 }
 
+export interface Transaction {
+    recipientWallet: string;
+    amount: number;
+    successful: boolean;
+    link: string;
+    createdAt: Date;
+}
+
 export interface Donation {
     from: string;
     wallet: string;

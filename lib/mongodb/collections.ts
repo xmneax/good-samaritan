@@ -1,7 +1,6 @@
-import { connectToDatabase } from "@/lib/mongodb/connection";
-import { User, Donation } from "@/lib/mongodb/types";
 import { Db } from "mongodb";
-import { PaymentDTO } from "@/globals";
+import { connectToDatabase } from "@/lib/mongodb/connection";
+import { User, Transaction, Donation } from "@/lib/mongodb/types";
 
 export async function getCollections() {
     const client = await connectToDatabase();
@@ -10,6 +9,6 @@ export async function getCollections() {
     return {
         userCollection: db.collection<User>("users"),
         donationCollection: db.collection<Donation>("donations"),
-        transactionCollection: db.collection<PaymentDTO>("transactions"),
+        transactionCollection: db.collection<Transaction>("transactions"),
     };
 }

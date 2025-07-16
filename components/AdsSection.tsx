@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/lib/mongodb/types";
-import { createPayment } from "@/lib/pibackend";
+import { createTransaction } from "@/lib/stellar";
 
 type AdsSectionProps = {
-    user: User;
+    walletAddress: string;
     setAppStage: (stage: string) => void;
     setToast: (toast: { type: "success" | "error"; message: string }) => void;
 };
@@ -33,18 +32,18 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
     );
 };
 
-export const AdsSection = ({ user, setAppStage, setToast }: AdsSectionProps) => {
+export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(30);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
-    const totalTime = 30;
+    const totalTime = 5;
 
     const handleCreateTransaction = async () => {
         setIsProcessingTransaction(true);
 
         try {
-            const { success, message } = await createPayment(user?.uid);
+            const { success, message } = await createTransaction(walletAddress);
 
             if (!success) {
                 setToast({ type: "error", message });

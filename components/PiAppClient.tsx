@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { User } from "@/lib/mongodb/types";
-import { Check, Loader2, Wallet, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
@@ -12,6 +12,7 @@ import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
 import { signIn } from "@/app/actions";
 import { AdsSection } from "@/components/AdsSection";
 import Link from "next/link";
+import { checkWalletAddress } from "@/lib/stellar";
 
 type Toast = {
     type: "success" | "error";
@@ -72,11 +73,20 @@ export default function PiAppClient() {
             return setToast({ type: "error", message: "Invalid wallet address. Must start with 'G'." });
         }
 
-        //todo - verify wallet address exist in the Horizon
-        // todo - check if the wallet has claimed in the past 14 days
+        if (walletAddress.length < 50) {
+            setIsLoading(false);
+            return setToast({ type: "error", message: "Invalid wallet address. Wallet address length too short." });
+        }
 
-        setIsLoading(false);
-        handleStage("adView");
+        const result = await checkWalletAddress(walletAddress);
+
+        if (result.success) {
+            setIsLoading(false);
+            handleStage("adView");
+        } else {
+            setIsLoading(false);
+            setToast({ type: "error", message: result.message });
+        }
     };
 
     const renderAppContent = () => {
@@ -94,11 +104,11 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">Need 0.01 Pi to move your lockups? We&#39;ve got you covered!</p>
                         </div>
 
-                        <PrimaryButton onClick={() => handleStage("login")}>Get Started</PrimaryButton>
+                        <PrimaryButton onClick={() => handleStage("walletInput")}>Get Started</PrimaryButton>
                     </div>
                 );
 
-            case "login":
+            /*case "login":
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
@@ -120,14 +130,14 @@ export default function PiAppClient() {
                             </SecondaryButton>
                         </div>
                     </div>
-                );
+                );*/
 
             case "walletInput":
                 return (
                     <div className="w-full max-w-md flex flex-col gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Wallet Address</h1>
-                            <p className="text-center font-medium">Welcome, {user?.username}</p>
+                            <p className="text-center font-medium">Enter your wallet address</p>
                         </div>
 
                         <input
@@ -140,14 +150,21 @@ export default function PiAppClient() {
 
                         <div className="w-full flex flex-col items-center gap-y-4">
                             <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
-                                Confirm Address
+                                <div className="flex items-center justify-center gap-2">
+                                    {isLoading && <Loader2 size={20} className="animate-spin" />}
+                                    Confirm Address
+                                </div>
                             </PrimaryButton>
+
+                            <SecondaryButton disabled={isLoading}>
+                                <Link href="/ecosystem">Cancel</Link>
+                            </SecondaryButton>
                         </div>
                     </div>
                 );
 
             case "adView":
-                return <AdsSection user={user as User} setAppStage={setAppStage} setToast={setToast} />;
+                return <AdsSection walletAddress={walletAddress} setAppStage={setAppStage} setToast={setToast} />;
 
             case "success":
                 return (

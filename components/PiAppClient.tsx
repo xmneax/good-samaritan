@@ -21,7 +21,7 @@ export type Toast = {
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error
+    const [appStage, setAppStage] = useState("success"); // welcome, login, walletInput, adView, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -178,9 +178,9 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">0.01 Pi has been sent to your wallet</p>
                         </div>
 
-                        <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
+                        <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
                             <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
-                                <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
+                                <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>
 
@@ -202,9 +202,9 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">The blockchain is busy right now. Please try again!</p>
                         </div>
 
-                        <div className="relative w-full h-50 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
+                        <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
                             <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
-                                <Image src={"/banner1.webp"} alt={"ads"} fill className="rounded-md" />
+                                <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>
 

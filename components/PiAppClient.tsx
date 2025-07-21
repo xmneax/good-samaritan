@@ -21,7 +21,7 @@ export type Toast = {
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("success"); // welcome, login, walletInput, adView, success, error
+    const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);

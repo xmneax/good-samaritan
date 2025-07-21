@@ -102,7 +102,7 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
             {/* Floating Timer with Progress */}
             {!isLoading && adView && timeLeft > 0 && (
                 <div className="z-50 p-2">
-                    {timeLeft > 0 && <div className="mx-2 text-sm text-gray-600">Please wait {timeLeft} seconds before continuing</div>}
+                    {timeLeft > 0 && <div className="mx-2 text-sm text-gray-600">Please wait {timeLeft}s. You’ll still get your Pi if you click the ads below.</div>}
                     <TimerWithProgress timeLeft={timeLeft} totalTime={totalTime} />
                 </div>
             )}
@@ -130,7 +130,7 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
                 ) : (
                     <div onClick={handleCreateTransaction} className="relative w-full h-full">
                         <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
-                            <Image src="/boostr_banner.webp" alt="visit boostr.space on Pi browser" fill />
+                            <Image src="/vertical-ads.webp" alt="visit boostr.space on Pi browser" fill />
                         </a>
                     </div>
                 )}

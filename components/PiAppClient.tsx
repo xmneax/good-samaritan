@@ -179,7 +179,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
+                            <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
                                 <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>
@@ -203,7 +203,7 @@ export default function PiAppClient() {
                         </div>
 
                         <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
+                            <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
                                 <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
                             </a>
                         </div>

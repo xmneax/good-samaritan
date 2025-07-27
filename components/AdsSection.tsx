@@ -129,7 +129,7 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
                     <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>
                 ) : (
                     <div onClick={handleCreateTransaction} className="relative w-full h-full">
-                        <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
+                        <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
                             <Image src="/vertical-ads.webp" alt="visit boostr.space on Pi browser" fill />
                         </a>
                     </div>

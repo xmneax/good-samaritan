@@ -18,7 +18,7 @@ export default function Ecosystem() {
 
                 <p className="text-center font-medium">Spend your Pi without worrying about exchanges or taxes!</p>
                 <SecondaryButton className="border-none">
-                    <a href="https://boostr8732.pinet.com" target="_blank" rel="noreferrer">
+                    <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
                         Explore Boostr
                     </a>
                 </SecondaryButton>

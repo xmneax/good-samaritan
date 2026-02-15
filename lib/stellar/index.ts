@@ -135,8 +135,8 @@ export async function checkWalletAddress(
                 ...(piUid && { piUid }),
                 createdAt: new Date(),
             });
-        } catch (err: any) {
-            if (err?.code === 11000) {
+        } catch (err: unknown) {
+            if (err && typeof err === "object" && "code" in err && (err as { code: number }).code === 11000) {
                 return {
                     success: false,
                     message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
@@ -144,10 +144,10 @@ export async function checkWalletAddress(
             }
             throw err;
         }
-    } catch (err: any) {
+    } catch (err: unknown) {
         return {
             success: false,
-            message: err?.message ?? "Unexpected db error",
+            message: err instanceof Error ? err.message : "Unexpected db error",
         };
     }
 
@@ -231,7 +231,7 @@ export async function createTransaction(walletAddress: string, piUid?: string) {
                 $set: {
                     status: "completed",
                     successful: result.successful,
-                    link: (result as any)?._links?.transaction?.href ?? "",
+                    link: (result as { _links?: { transaction?: { href?: string } } })?._links?.transaction?.href ?? "",
                     ...(piUid && { piUid }),
                 },
             }
@@ -241,14 +241,23 @@ export async function createTransaction(walletAddress: string, piUid?: string) {
             success: true,
             message: "",
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         await transactionCollection.updateOne(
             { recipientWallet: walletAddress, status: "processing" },
             { $set: { status: "pending" } }
         );
+        const message =
+            error && typeof error === "object" && "response" in error
+                ? String(
+                      (error as { response?: { data?: { extras?: { result_codes?: string } } } }).response?.data?.extras?.result_codes ??
+                          (error instanceof Error ? error.message : "Unexpected error occurred")
+                  )
+                : error instanceof Error
+                  ? error.message
+                  : "Unexpected error occurred";
         return {
             success: false,
-            message: error?.response?.data?.extras?.result_codes || error.message || "Unexpected error occurred",
+            message,
         };
     }
 }

@@ -5,7 +5,7 @@ import { User, Transaction, Donation } from "@/lib/mongodb/types";
 /** Ensures at most one pending/processing claim per wallet (prevents double-claim race). */
 export async function ensureTransactionIndexes() {
     const client = await connectToDatabase();
-    const db = client.db();
+    const db: Db = client.db();
     const coll = db.collection<Transaction>("transactions");
     await coll.createIndex(
         { recipientWallet: 1 },

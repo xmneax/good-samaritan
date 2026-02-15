@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { User } from "@/lib/mongodb/types";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, Loader2, Wallet, X } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
@@ -78,7 +78,10 @@ export default function PiAppClient() {
             return setToast({ type: "error", message: "Invalid wallet address. Wallet address length too short." });
         }
 
-        const result = await checkWalletAddress(walletAddress);
+        const result = await checkWalletAddress(walletAddress, {
+            piUid: user?.uid,
+            piWalletAddress: user?.wallet,
+        });
 
         if (result.success) {
             setIsLoading(false);
@@ -104,19 +107,17 @@ export default function PiAppClient() {
                             <p className="text-center font-medium">Need 0.01 Pi to move your lockups? We&#39;ve got you covered!</p>
                         </div>
 
-                        <PrimaryButton onClick={() => handleStage("walletInput")}>Get Started</PrimaryButton>
+                        <PrimaryButton onClick={() => handleStage("login")}>Get Started</PrimaryButton>
                     </div>
                 );
 
-            /*case "login":
+            case "login":
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Login with Pi</h1>
-
                             <p className="text-center font-medium">Connect your Pi Network account to continue</p>
                         </div>
-
                         <div className="w-full flex flex-col items-center gap-y-4">
                             <PrimaryButton onClick={handleLogin} disabled={isLoading}>
                                 <div className="flex items-center justify-center gap-2">
@@ -124,13 +125,12 @@ export default function PiAppClient() {
                                     {isLoading ? "Signing in..." : "Login with Pi Network"}
                                 </div>
                             </PrimaryButton>
-
                             <SecondaryButton disabled={isLoading}>
                                 <Link href="/ecosystem">Cancel</Link>
                             </SecondaryButton>
                         </div>
                     </div>
-                );*/
+                );
 
             case "walletInput":
                 return (
@@ -164,7 +164,14 @@ export default function PiAppClient() {
                 );
 
             case "adView":
-                return <AdsSection walletAddress={walletAddress} setAppStage={setAppStage} setToast={setToast} />;
+                return (
+                    <AdsSection
+                        walletAddress={walletAddress}
+                        piUid={user?.uid}
+                        setAppStage={setAppStage}
+                        setToast={setToast}
+                    />
+                );
 
             case "success":
                 return (

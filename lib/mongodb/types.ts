@@ -4,11 +4,18 @@ export interface User {
     wallet?: string;
 }
 
+export type TransactionStatus = "pending" | "processing" | "completed" | "failed";
+
 export interface Transaction {
     recipientWallet: string;
     amount: number;
-    successful: boolean;
-    link: string;
+    status: TransactionStatus;
+    /** Pi account uid when authenticated; used for one claim per account per 14 days */
+    piUid?: string;
+    /** Set when status is completed */
+    successful?: boolean;
+    /** Set when status is completed */
+    link?: string;
     createdAt: Date;
 }
 

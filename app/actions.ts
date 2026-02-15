@@ -20,11 +20,15 @@ export async function signIn(accessToken: string): Promise<SignInResult> {
         }
 
         const user = await response.json();
+        const normalized = {
+            ...user,
+            wallet: user.wallet ?? user.wallet_address ?? undefined,
+        };
 
         return {
             success: true,
             message: "",
-            data: user,
+            data: normalized,
         };
     } catch (err: any) {
         console.error("Sign-in error:", err);

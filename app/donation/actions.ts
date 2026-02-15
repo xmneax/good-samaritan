@@ -31,15 +31,21 @@ export async function onReadyForServerCompletion(paymentId: string, txid: string
 
     const data = await response.json();
 
+    const from = typeof data?.user_uid === "string" ? data.user_uid : "";
+    const wallet = typeof data?.from_address === "string" ? data.from_address : "";
+    const amount = typeof data?.amount === "number" ? data.amount : 0;
+    const paymentIdVal = typeof data?.identifier === "string" ? data.identifier : paymentId;
+    const link = data?.transaction && typeof data.transaction._link === "string" ? data.transaction._link : "";
+
     const { donationCollection } = await getCollections();
 
     await donationCollection.insertOne({
-        from: data.user_uid,
-        wallet: data.from_address,
-        amount: data.amount,
+        from,
+        wallet,
+        amount,
         status: "completed",
-        paymentId: data.identifier,
-        link: data.transaction._link,
+        paymentId: paymentIdVal,
+        link,
         createdAt: new Date(),
     });
 

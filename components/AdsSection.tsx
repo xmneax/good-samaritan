@@ -4,6 +4,7 @@ import Image from "next/image";
 
 type AdsSectionProps = {
     walletAddress: string;
+    piUid?: string;
     setAppStage: (stage: string) => void;
     setToast: (toast: { type: "success" | "error"; message: string }) => void;
 };
@@ -33,7 +34,7 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
     );
 };
 
-export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionProps) => {
+export const AdsSection = ({ walletAddress, piUid, setAppStage, setToast }: AdsSectionProps) => {
     const [adView, setAdView] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState(30);
@@ -46,7 +47,7 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
         setIsProcessingTransaction(true);
 
         try {
-            const { success, message } = await createTransaction(walletAddress);
+            const { success, message } = await createTransaction(walletAddress, piUid);
 
             if (!success) {
                 setToast({ type: "error", message });
@@ -83,12 +84,12 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
         }
     }, [isLoading, adView, timeLeft]);
 
-    // Auto-trigger transaction when the timer reaches 0
+    // Auto-trigger transaction when the timer reaches 0 (guard: wallet set, not already processing)
     useEffect(() => {
-        if (timeLeft === 0 && !isProcessingTransaction) {
+        if (walletAddress && timeLeft === 0 && !isProcessingTransaction) {
             void handleCreateTransaction();
         }
-    }, [timeLeft, isProcessingTransaction]);
+    }, [walletAddress, timeLeft, isProcessingTransaction]);
 
     return (
         <div className="fixed inset-0 z-50 bg-[linear-gradient(135deg,#f093fb_0%,#f5576c_100%)] w-screen h-screen flex flex-col overflow-hidden">
@@ -107,8 +108,8 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
                 </div>
             )}
 
-            {/* Ads Content */}
-            <div className="h-full bg-[rgba(255,255,255,0.2)] flex items-center justify-center">
+            {/* Ads Content: in-app message first; partner link secondary */}
+            <div className="h-full bg-[rgba(255,255,255,0.2)] flex flex-col items-center justify-center gap-6 p-4">
                 {isLoading ? (
                     <div className="text-center text-gray-600">
                         <div className="text-lg">Preparing your ads...</div>
@@ -118,21 +119,32 @@ export const AdsSection = ({ walletAddress, setAppStage, setToast }: AdsSectionP
                         <p className="text-2xl font-bold mb-4">Processing Transaction</p>
                         <p>Sending Pi to your wallet. Please hold...</p>
                     </div>
-                ) : /*                    <div className="text-center text-gray-800">
-                        <div className="text-2xl font-bold mb-4">Advertisement</div>
-                        <div className="text-lg">Your ad content would appear here</div>
-                        {timeLeft > 0 && <div className="mt-4 text-sm text-gray-600">Please wait {timeLeft} seconds before continuing</div>}
-                        {timeLeft === 0 && !isProcessingTransaction && <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>}
-                    </div>*/
-
-                timeLeft === 0 && !isProcessingTransaction ? (
-                    <div className="mt-4 text-sm text-gray-600">Automatically proceeding...</div>
                 ) : (
-                    <div onClick={handleCreateTransaction} className="relative w-full h-full">
-                        <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
-                            <Image src="/vertical-ads.webp" alt="visit boostr.space on Pi browser" fill />
-                        </a>
-                    </div>
+                    <>
+                        <div className="text-center text-gray-800 max-w-md">
+                            <p className="text-xl font-bold mb-2">Thanks for supporting the ecosystem</p>
+                            <p className="text-sm">
+                                {timeLeft > 0
+                                    ? `Please wait ${timeLeft}s. You'll still get your Pi. Optionally visit our partner below.`
+                                    : "Sending your 0.01 π now. You can visit our partner below."}
+                            </p>
+                        </div>
+                        {timeLeft > 0 && (
+                            <div onClick={handleCreateTransaction} className="relative w-48 h-48 rounded-lg overflow-hidden">
+                                <Image src="/vertical-ads.webp" alt="Partner" width={192} height={192} className="object-cover" />
+                            </div>
+                        )}
+                        {process.env.NEXT_PUBLIC_PINET_URL && (
+                            <a
+                                href={process.env.NEXT_PUBLIC_PINET_URL}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-sm text-blue-600 underline"
+                            >
+                                Visit partner (Boostr.space)
+                            </a>
+                        )}
+                    </>
                 )}
             </div>
         </div>

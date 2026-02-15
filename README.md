@@ -1,20 +1,33 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+**Good Samaritan** – Pi Network faucet app: get 0.01 π to unlock lockups (with Pi login, one claim per account per 14 days).
 
-First, run the development server:
+## Setup
+
+### Environment variables
+
+Create a `.env.local` (or `.env`) in the project root with:
+
+| Variable | Description |
+|----------|-------------|
+| `MONGODB_URI` | MongoDB connection string |
+| `PI_WALLET_PRIVATE_SEED` | Stellar secret key for the app wallet (sends 0.01 π) |
+| `PI_API_URL` | Pi payments API base URL |
+| `PI_API_KEY` | Pi API key for payment approve/complete |
+| `NEXT_PUBLIC_PINET_URL` | (Optional) Partner link URL, e.g. Boostr.space |
+
+Do not commit `.env*`; they are gitignored.
+
+### Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3600](http://localhost:3600) (this project uses port 3600).
+
+## Getting Started
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

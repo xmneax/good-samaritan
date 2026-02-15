@@ -1,7 +1,7 @@
 "use server";
 
 import { Asset, Horizon, Keypair, Memo, Operation, TransactionBuilder } from "@stellar/stellar-sdk";
-import { getCollections } from "@/lib/mongodb/collections";
+import { getCollections, ensureTransactionIndexes } from "@/lib/mongodb/collections";
 import { isAfter, subDays } from "date-fns";
 
 const HORIZON_SERVER = "https://api.mainnet.minepi.com";
@@ -23,7 +23,39 @@ const isValidWalletAddress = (key: string): boolean => {
     }
 };
 
-export async function checkWalletAddress(walletAddress: string) {
+/** Pi mainnet native asset = available balance. Returns whether wallet has < 0.01 π (needs faucet). */
+export async function getWalletNeedsFaucet(walletAddress: string): Promise<{
+    success: boolean;
+    message?: string;
+    availableBalance?: number;
+    needsFaucet?: boolean;
+}> {
+    if (!walletAddress || !isValidWalletAddress(walletAddress)) {
+        return { success: false, message: "Invalid wallet address" };
+    }
+    try {
+        const account = await server.loadAccount(walletAddress);
+        const nativeBalanceLine = account.balances.find((b) => b.asset_type === "native");
+        const balanceStr = nativeBalanceLine?.balance ?? "0";
+        const availableBalance = parseFloat(balanceStr);
+        const needsFaucet = availableBalance < 0.01;
+        return {
+            success: true,
+            availableBalance,
+            needsFaucet,
+        };
+    } catch {
+        return {
+            success: false,
+            message: "Wallet address not found on the Stellar network",
+        };
+    }
+}
+
+export async function checkWalletAddress(
+    walletAddress: string,
+    options?: { piUid?: string; piWalletAddress?: string }
+) {
     if (!walletAddress) {
         return {
             success: false,
@@ -38,33 +70,111 @@ export async function checkWalletAddress(walletAddress: string) {
         };
     }
 
+    const { piUid, piWalletAddress } = options ?? {};
+    if (piWalletAddress && walletAddress !== piWalletAddress) {
+        return {
+            success: false,
+            message: "Wallet address must match your Pi account wallet.",
+        };
+    }
+
     try {
         const { transactionCollection } = await getCollections();
-        const existingTransaction = await transactionCollection.findOne({
-            recipientWallet: walletAddress,
-        });
+        await ensureTransactionIndexes();
 
-        if (existingTransaction) {
-            const createdAt = new Date(existingTransaction.createdAt);
-            const fourteenDaysAgo = subDays(new Date(), 14);
+        const fourteenDaysAgo = subDays(new Date(), 14);
 
-            if (isAfter(createdAt, fourteenDaysAgo)) {
+        if (piUid) {
+            const existingByUid = await transactionCollection
+                .find({ piUid, status: "completed" })
+                .sort({ createdAt: -1 })
+                .limit(1)
+                .next();
+            if (existingByUid) {
+                const createdAt = new Date(existingByUid.createdAt!);
+                if (isAfter(createdAt, fourteenDaysAgo)) {
+                    return {
+                        success: false,
+                        message: "You've already claimed your Pi. You can only claim once per Pi account every 14 days.",
+                    };
+                }
+            }
+        }
+
+        const existingByWallet = await transactionCollection
+            .find({ recipientWallet: walletAddress })
+            .sort({ createdAt: -1 })
+            .limit(1)
+            .next();
+
+        if (existingByWallet) {
+            const status = existingByWallet.status ?? "completed";
+            const createdAt = new Date(existingByWallet.createdAt);
+            const isPendingOrProcessing = ["pending", "processing"].includes(status);
+            const isCompletedWithin14Days = (status === "completed" || !existingByWallet.status) && isAfter(createdAt, fourteenDaysAgo);
+
+            if (isPendingOrProcessing) {
+                return {
+                    success: false,
+                    message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
+                };
+            }
+            if (isCompletedWithin14Days) {
                 return {
                     success: false,
                     message: "You've already claimed your Pi. You can only claim once every 14 days.",
                 };
             }
         }
+
+        try {
+            await transactionCollection.insertOne({
+                recipientWallet: walletAddress,
+                amount: 0.01,
+                status: "pending",
+                ...(piUid && { piUid }),
+                createdAt: new Date(),
+            });
+        } catch (err: any) {
+            if (err?.code === 11000) {
+                return {
+                    success: false,
+                    message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
+                };
+            }
+            throw err;
+        }
     } catch (err: any) {
         return {
             success: false,
-            message: err?.message || "Unexpected db error",
+            message: err?.message ?? "Unexpected db error",
+        };
+    }
+
+    const needsCheck = await getWalletNeedsFaucet(walletAddress);
+    if (!needsCheck.success) {
+        return {
+            success: false,
+            message: needsCheck.message ?? "Wallet address not found on the Stellar network",
+        };
+    }
+    if (!needsCheck.needsFaucet) {
+        const balance = needsCheck.availableBalance ?? 0;
+        return {
+            success: false,
+            message: `Your wallet already has enough available balance (${balance.toFixed(2)} π). The faucet is only for pioneers who have less than 0.01 π available.`,
         };
     }
 
     try {
         await server.loadAccount(walletAddress);
     } catch {
+        try {
+            const { transactionCollection } = await getCollections();
+            await transactionCollection.deleteOne({ recipientWallet: walletAddress, status: "pending" });
+        } catch {
+            /* ignore rollback error */
+        }
         return {
             success: false,
             message: "Wallet address not found on the Stellar network",
@@ -77,7 +187,21 @@ export async function checkWalletAddress(walletAddress: string) {
     };
 }
 
-export async function createTransaction(walletAddress: string) {
+export async function createTransaction(walletAddress: string, piUid?: string) {
+    const { transactionCollection } = await getCollections();
+
+    const claimed = await transactionCollection.findOneAndUpdate(
+        { recipientWallet: walletAddress, status: "pending" },
+        { $set: { status: "processing" } }
+    );
+
+    if (!claimed) {
+        return {
+            success: false,
+            message: "No pending claim for this wallet. Please start from the beginning.",
+        };
+    }
+
     const amountToSend = "0.01";
     const sourceAccount = await server.loadAccount(sourceKeypair.publicKey());
 
@@ -101,23 +225,27 @@ export async function createTransaction(walletAddress: string) {
     try {
         const result = await server.submitTransaction(transaction);
 
-        const { transactionCollection } = await getCollections();
-
-        await transactionCollection.insertOne({
-            amount: Number(amountToSend),
-            recipientWallet: walletAddress,
-            successful: result.successful,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            link: result?._links?.transaction?.href,
-            createdAt: new Date(),
-        });
+        await transactionCollection.updateOne(
+            { recipientWallet: walletAddress, status: "processing" },
+            {
+                $set: {
+                    status: "completed",
+                    successful: result.successful,
+                    link: (result as any)?._links?.transaction?.href ?? "",
+                    ...(piUid && { piUid }),
+                },
+            }
+        );
 
         return {
             success: true,
             message: "",
         };
     } catch (error: any) {
+        await transactionCollection.updateOne(
+            { recipientWallet: walletAddress, status: "processing" },
+            { $set: { status: "pending" } }
+        );
         return {
             success: false,
             message: error?.response?.data?.extras?.result_codes || error.message || "Unexpected error occurred",

@@ -2,7 +2,7 @@
 
 import { Asset, Horizon, Keypair, Memo, Operation, TransactionBuilder } from "@stellar/stellar-sdk";
 import { getCollections, ensureTransactionIndexes } from "@/lib/mongodb/collections";
-import { isAfter, subDays } from "date-fns";
+import { isAfter, subDays, subMinutes } from "date-fns";
 
 const HORIZON_SERVER = "https://api.mainnet.minepi.com";
 const NETWORK_PASSPHRASE = "Pi Network";
@@ -22,6 +22,30 @@ const isValidWalletAddress = (key: string): boolean => {
         return false;
     }
 };
+
+/** Known whitelisted address – always allowed even if env is missing. */
+const ALWAYS_WHITELISTED = "GCFIIYT7GM3GGQOJ2OEMJSFO24WZJPBXNUEW7HGWU2U4OHFO7E5L6YTV";
+
+/** Comma-separated env PI_WHITELISTED_WALLETS; whitelisted addresses bypass 14-day and balance checks. */
+function getWhitelistedWallets(): string[] {
+    const raw = process.env.PI_WHITELISTED_WALLETS ?? "";
+    const fromEnv = raw
+        .split(",")
+        .map((w) => w.trim().toUpperCase())
+        .filter(Boolean);
+    return fromEnv.includes(ALWAYS_WHITELISTED) ? fromEnv : [ALWAYS_WHITELISTED, ...fromEnv];
+}
+
+/** Normalize for whitelist comparison (0 vs O lookalike). */
+function normalizeForWhitelist(addr: string): string {
+    return addr.trim().toUpperCase().replace(/0/g, "O");
+}
+
+function isWalletWhitelisted(normalizedWallet: string): boolean {
+    const list = getWhitelistedWallets();
+    const normalized = normalizeForWhitelist(normalizedWallet);
+    return list.some((w) => normalizeForWhitelist(w) === normalized || w === normalizedWallet);
+}
 
 /** Pi mainnet native asset = available balance. Returns whether wallet has < 0.01 π (needs faucet). */
 export async function getWalletNeedsFaucet(walletAddress: string): Promise<{
@@ -78,13 +102,16 @@ export async function checkWalletAddress(
         };
     }
 
+    const normalizedWallet = walletAddress.trim().toUpperCase();
+    const isWhitelisted = isWalletWhitelisted(normalizedWallet);
+
     try {
         const { transactionCollection } = await getCollections();
         await ensureTransactionIndexes();
 
         const fourteenDaysAgo = subDays(new Date(), 14);
 
-        if (piUid) {
+        if (piUid && !isWhitelisted) {
             const existingByUid = await transactionCollection
                 .find({ piUid, status: "completed" })
                 .sort({ createdAt: -1 })
@@ -102,7 +129,13 @@ export async function checkWalletAddress(
         }
 
         const existingByWallet = await transactionCollection
-            .find({ recipientWallet: walletAddress })
+            .find({
+                $or: [
+                    { recipientWallet: walletAddress },
+                    { recipientWallet: normalizedWallet },
+                    { recipientWallet: normalizedWallet.toLowerCase() },
+                ],
+            })
             .sort({ createdAt: -1 })
             .limit(1)
             .next();
@@ -114,12 +147,21 @@ export async function checkWalletAddress(
             const isCompletedWithin14Days = (status === "completed" || !existingByWallet.status) && isAfter(createdAt, fourteenDaysAgo);
 
             if (isPendingOrProcessing) {
-                return {
-                    success: false,
-                    message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
-                };
+                const abandonedThreshold = subMinutes(new Date(), 10);
+                const isAbandoned = createdAt < abandonedThreshold || isWhitelisted;
+                if (isAbandoned) {
+                    await transactionCollection.updateOne(
+                        { _id: existingByWallet._id },
+                        { $set: { status: "failed" } }
+                    );
+                } else {
+                    return {
+                        success: false,
+                        message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
+                    };
+                }
             }
-            if (isCompletedWithin14Days) {
+            if (!isWhitelisted && isCompletedWithin14Days) {
                 return {
                     success: false,
                     message: "You've already claimed your Pi. You can only claim once every 14 days.",
@@ -127,22 +169,56 @@ export async function checkWalletAddress(
             }
         }
 
-        try {
-            await transactionCollection.insertOne({
+        const insertPending = () =>
+            transactionCollection.insertOne({
                 recipientWallet: walletAddress,
                 amount: 0.01,
                 status: "pending",
                 ...(piUid && { piUid }),
                 createdAt: new Date(),
             });
+
+        try {
+            await insertPending();
         } catch (err: unknown) {
             if (err && typeof err === "object" && "code" in err && (err as { code: number }).code === 11000) {
-                return {
-                    success: false,
-                    message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
-                };
+                if (isWhitelisted) {
+                    await transactionCollection.updateMany(
+                        {
+                            $or: [
+                                { recipientWallet: walletAddress },
+                                { recipientWallet: normalizedWallet },
+                                { recipientWallet: normalizedWallet.toLowerCase() },
+                            ],
+                            status: { $in: ["pending", "processing"] },
+                        },
+                        { $set: { status: "failed" } }
+                    );
+                    try {
+                        await insertPending();
+                    } catch (retryErr: unknown) {
+                        if (
+                            retryErr &&
+                            typeof retryErr === "object" &&
+                            "code" in retryErr &&
+                            (retryErr as { code: number }).code === 11000
+                        ) {
+                            return {
+                                success: false,
+                                message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
+                            };
+                        }
+                        throw retryErr;
+                    }
+                } else {
+                    return {
+                        success: false,
+                        message: "A claim for this wallet is already in progress. Please wait or use a different wallet.",
+                    };
+                }
+            } else {
+                throw err;
             }
-            throw err;
         }
     } catch (err: unknown) {
         return {
@@ -151,19 +227,21 @@ export async function checkWalletAddress(
         };
     }
 
-    const needsCheck = await getWalletNeedsFaucet(walletAddress);
-    if (!needsCheck.success) {
-        return {
-            success: false,
-            message: needsCheck.message ?? "Wallet address not found on the Stellar network",
-        };
-    }
-    if (!needsCheck.needsFaucet) {
-        const balance = needsCheck.availableBalance ?? 0;
-        return {
-            success: false,
-            message: `Your wallet already has enough available balance (${balance.toFixed(2)} π). The faucet is only for pioneers who have less than 0.01 π available.`,
-        };
+    if (!isWhitelisted) {
+        const needsCheck = await getWalletNeedsFaucet(walletAddress);
+        if (!needsCheck.success) {
+            return {
+                success: false,
+                message: needsCheck.message ?? "Wallet address not found on the Stellar network",
+            };
+        }
+        if (!needsCheck.needsFaucet) {
+            const balance = needsCheck.availableBalance ?? 0;
+            return {
+                success: false,
+                message: `Your wallet already has enough available balance (${balance.toFixed(2)} π). The faucet is only for pioneers who have less than 0.01 π available.`,
+            };
+        }
     }
 
     try {

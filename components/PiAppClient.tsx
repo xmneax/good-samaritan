@@ -116,7 +116,7 @@ export default function PiAppClient() {
                     <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
                         <div className="flex flex-col items-center gap-y-2">
                             <h1>Login with Pi</h1>
-                            <p className="text-center font-medium">Connect your Pi Network account to continue</p>
+                            <p className="text-center font-medium">Connect your Pi Network account to continue. You must sign in before entering your wallet.</p>
                         </div>
                         <div className="w-full flex flex-col items-center gap-y-4">
                             <PrimaryButton onClick={handleLogin} disabled={isLoading}>
@@ -142,11 +142,15 @@ export default function PiAppClient() {
 
                         <input
                             type="text"
-                            className="w-full bg-white p-3 rounded-lg text-black"
-                            placeholder="Enter your wallet address"
+                            className="w-full bg-white p-3 rounded-lg text-black font-mono text-sm"
+                            placeholder="Paste full address (56 characters, starts with G)"
                             value={walletAddress}
+                            maxLength={56}
                             onChange={(e) => setWalletAddress(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
                         />
+                        <p className="text-xs text-white/80">
+                            Use copy-paste. Full address is 56 characters. Avoid mixing 0 (zero) and O (letter).
+                        </p>
 
                         <div className="w-full flex flex-col items-center gap-y-4">
                             <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>

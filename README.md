@@ -15,6 +15,7 @@ Create a `.env.local` (or `.env`) in the project root with:
 | `PI_API_URL` | Pi payments API base URL |
 | `PI_API_KEY` | Pi API key for payment approve/complete |
 | `NEXT_PUBLIC_PINET_URL` | (Optional) Partner link URL, e.g. Boostr.space |
+| `PI_WHITELISTED_WALLETS` | (Optional) Comma-separated wallet addresses that can always receive 0.01 π (bypass 14-day and balance checks) |
 
 Do not commit `.env*`; they are gitignored.
 

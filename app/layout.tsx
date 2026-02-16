@@ -30,36 +30,38 @@ export default function RootLayout({
         <html lang="en">
             <PiScript />
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between`}>
-                <header className="flex justify-center items-center gap-x-3 p-2">
-                    <Link href="/" className="font-semibold p-2 hover:text-blue-500">
-                        Home
-                    </Link>
-                    <Link href="/ecosystem" className="font-semibold p-2 hover:text-blue-500">
-                        Ecosystem
-                    </Link>
-
-                    <Link href="/donation" className="font-semibold p-2 hover:text-blue-500">
-                        Donate
-                    </Link>
+                <header className="sticky top-0 z-40 w-full backdrop-blur-sm bg-white/80 border-b border-violet-100">
+                    <nav className="flex justify-center items-center gap-x-6 sm:gap-x-8 py-4 px-4">
+                        <Link href="/" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
+                            Home
+                        </Link>
+                        <Link href="/ecosystem" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
+                            Ecosystem
+                        </Link>
+                        <Link href="/donation" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
+                            Donate
+                        </Link>
+                    </nav>
                 </header>
 
-                <main className="flex-1 flex">{children}</main>
+                <main className="flex-1 flex min-h-0">{children}</main>
 
-                <footer className="flex justify-center items-center gap-x-2 p-2">
-                    <Link href="/privacy" className="text-sm p-1">
-                        Privacy Policy
-                    </Link>
-                    <Link href="/terms" className="text-sm p-1">
-                        Terms & Conditions
-                    </Link>
-
-                    <a href="mailto:support@goodsamaritan.pi" className="text-sm p-1">
-                        Help
-                    </a>
+                <footer className="border-t border-violet-100 bg-white/60 backdrop-blur-sm py-4 px-4">
+                    <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-sm">
+                        <Link href="/privacy" className="text-gray-600 hover:text-violet-600 transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="text-gray-600 hover:text-violet-600 transition-colors">
+                            Terms & Conditions
+                        </Link>
+                        <a href="mailto:support@goodsamaritan.pi" className="text-gray-600 hover:text-violet-600 transition-colors">
+                            Help
+                        </a>
+                    </div>
                 </footer>
 
                 <NextTopLoader
-                    color="#117aec"
+                    color="#8b5cf6"
                     initialPosition={0.08}
                     crawlSpeed={200}
                     height={3}
@@ -67,7 +69,7 @@ export default function RootLayout({
                     showSpinner={true}
                     easing="ease"
                     speed={200}
-                    shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                    shadow="0 0 10px #c4b5fd,0 0 5px #ddd6fe"
                 />
             </body>
         </html>

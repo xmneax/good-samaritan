@@ -11,7 +11,10 @@ export const SecondaryButton = ({ children, className, type = "button", ...props
         <button
             type={type}
             className={clsx(
-                "w-full bg-[rgba(255,255,255,0.2)] text-white border-2 border-white py-3 px-4 rounded-lg font-bold tracking-wide cursor-pointer disabled:cursor-default",
+                "w-full py-3 px-5 rounded-xl font-semibold tracking-wide transition-all duration-200",
+                "bg-white/80 text-violet-700 border-2 border-violet-200",
+                "hover:bg-violet-50 hover:border-violet-300 active:scale-[0.98]",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
                 className
             )}
             {...props}>

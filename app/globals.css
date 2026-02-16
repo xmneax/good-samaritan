@@ -4,7 +4,7 @@
 /* Custom variant for dark mode */
 @custom-variant dark (&:is(.dark *));
 
-/* Theme variables */
+/* Theme variables - Pastel palette */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -45,47 +45,54 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Default (light) color scheme */
+/* Pastel color scheme */
 :root {
-  --radius: 0.625rem;
-  --background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --foreground: #ffffff;
-  --card: transparent;
-  --card-foreground: #ffffff;
-  --popover: transparent;
-  --popover-foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #f5576c;
-  --secondary: rgba(255, 255, 255, 0.2);
-  --secondary-foreground: #ffffff;
-  --muted: rgba(255, 255, 255, 0.2);
-  --muted-foreground: #fddaff;
-  --accent: rgba(255, 255, 255, 0.2);
-  --accent-foreground: #ffffff;
-  --destructive: #ff4d4f;
-  --border: rgba(255, 255, 255, 0.3);
-  --input: rgba(255, 255, 255, 0.2);
-  --ring: rgba(255, 255, 255, 0.4);
-  --chart-1: #ff8ecf;
-  --chart-2: #9be7ff;
-  --chart-3: #c3b6ff;
-  --chart-4: #ffd980;
-  --chart-5: #ffc371;
-  --sidebar: transparent;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: rgba(255, 255, 255, 0.3);
+  --radius: 0.75rem;
+  /* Soft pastel backgrounds */
+  --background: linear-gradient(160deg, #fdf2f8 0%, #fce7f3 25%, #f5f3ff 75%, #ede9fe 100%);
+  --foreground: #374151;
+  /* White content surfaces */
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+  /* Pastel primary (soft coral/rose) */
+  --primary: #f472b6;
+  --primary-foreground: #ffffff;
+  /* Pastel secondary (soft lavender) */
+  --secondary: #e9d5ff;
+  --secondary-foreground: #6b21a8;
+  /* Muted pastels */
+  --muted: #f3e8ff;
+  --muted-foreground: #6b7280;
+  --accent: #ddd6fe;
+  --accent-foreground: #5b21b6;
+  --destructive: #fca5a5;
+  --border: #e9d5ff;
+  --input: #f5f3ff;
+  --ring: #c4b5fd;
+  /* Chart colors - pastel set */
+  --chart-1: #f9a8d4;
+  --chart-2: #a5f3fc;
+  --chart-3: #c4b5fd;
+  --chart-4: #fde68a;
+  --chart-5: #bbf7d0;
+  --sidebar: #faf5ff;
+  --sidebar-foreground: #4c1d95;
+  --sidebar-primary: #c4b5fd;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(255, 255, 255, 0.15);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.3);
-  --sidebar-ring: rgba(255, 255, 255, 0.4);
+  --sidebar-accent: #ede9fe;
+  --sidebar-accent-foreground: #5b21b6;
+  --sidebar-border: #e9d5ff;
+  --sidebar-ring: #c4b5fd;
 }
 
 /* Dark mode override */
 .dark {
-  --background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --foreground: #ffffff;
-  /* You can keep the rest of the values same as light or tweak as needed */
+  --background: linear-gradient(160deg, #1e1b4b 0%, #312e81 100%);
+  --foreground: #e9d5ff;
+  --card: #312e81;
+  --card-foreground: #e9d5ff;
 }
 
 /* Base styling */
@@ -102,10 +109,10 @@
   }
 
   h1 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-bold text-gray-800 tracking-tight;
   }
 
   h2 {
-    @apply text-2xl font-bold;
+    @apply text-2xl font-bold text-gray-800 tracking-tight;
   }
 }

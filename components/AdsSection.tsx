@@ -10,9 +10,9 @@ type AdsSectionProps = {
 };
 
 const LoadingSpinner = () => (
-    <div className="flex items-center justify-center space-x-2 text-white">
-        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-        <span className="text-sm">Loading ads...</span>
+    <div className="flex items-center justify-center space-x-2 text-gray-700">
+        <div className="animate-spin rounded-full h-4 w-4 border-2 border-violet-300 border-t-violet-600" />
+        <span className="text-sm font-medium">Loading ads...</span>
     </div>
 );
 
@@ -20,15 +20,15 @@ const TimerWithProgress = ({ timeLeft, totalTime }: { timeLeft: number; totalTim
     const progress = ((totalTime - timeLeft) / totalTime) * 100;
 
     return (
-        <div className="flex items-center space-x-3 text-white opacity-50">
+        <div className="flex items-center space-x-3">
             {/* Progress Bar */}
-            <div className="flex-1 h-2 bg-gray-600 bg-opacity-50 rounded-full overflow-hidden mx-2">
-                <div className="h-full bg-red-500 transition-all duration-1000 ease-linear rounded-full" style={{ width: `${progress}%` }} />
+            <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
+                <div className="h-full bg-violet-500 transition-all duration-1000 ease-linear rounded-full" style={{ width: `${progress}%` }} />
             </div>
 
             {/* Countdown Display */}
-            <div className="w-6 h-6 bg-gray-800 bg-opacity-80 flex justify-center items-center rounded-full flex-shrink-0">
-                <span className="text-xs font-mono font-bold">{timeLeft}</span>
+            <div className="w-8 h-8 bg-violet-500 text-white flex justify-center items-center rounded-lg flex-shrink-0 font-mono font-bold text-sm">
+                {timeLeft}
             </div>
         </div>
     );

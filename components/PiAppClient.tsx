@@ -96,73 +96,85 @@ export default function PiAppClient() {
         switch (appStage) {
             case "welcome":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
-                        <div className="relative rounded-xl">
-                            <Image src={"/logo.png"} alt={"logo"} width={90} height={90} className="rounded-xl" />
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
+                            <div className="relative rounded-2xl overflow-hidden ring-2 ring-violet-100">
+                                <Image src={"/logo.png"} alt={"logo"} width={96} height={96} className="rounded-2xl" />
+                            </div>
+
+                            <div className="flex flex-col items-center gap-y-3 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Good Samaritan</h1>
+                                <p className="text-gray-600 text-base leading-relaxed max-w-sm">
+                                    Need 0.01 Pi to move your lockups? We&#39;ve got you covered!
+                                </p>
+                            </div>
+
+                            <div className="w-full max-w-[280px]">
+                                <PrimaryButton onClick={() => handleStage("login")}>Get Started</PrimaryButton>
+                            </div>
                         </div>
-
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1>Good Samaritan</h1>
-
-                            <p className="text-center font-medium">Need 0.01 Pi to move your lockups? We&#39;ve got you covered!</p>
-                        </div>
-
-                        <PrimaryButton onClick={() => handleStage("login")}>Get Started</PrimaryButton>
                     </div>
                 );
 
             case "login":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1>Login with Pi</h1>
-                            <p className="text-center font-medium">Connect your Pi Network account to continue. You must sign in before entering your wallet.</p>
-                        </div>
-                        <div className="w-full flex flex-col items-center gap-y-4">
-                            <PrimaryButton onClick={handleLogin} disabled={isLoading}>
-                                <div className="flex items-center justify-center gap-2">
-                                    {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Wallet size={20} />}
-                                    {isLoading ? "Signing in..." : "Login with Pi Network"}
-                                </div>
-                            </PrimaryButton>
-                            <SecondaryButton disabled={isLoading}>
-                                <Link href="/ecosystem">Cancel</Link>
-                            </SecondaryButton>
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
+                            <div className="flex flex-col items-center gap-y-3 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Login with Pi</h1>
+                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-sm">
+                                    Connect your Pi Network account to continue. You must sign in before entering your wallet.
+                                </p>
+                            </div>
+                            <div className="w-full flex flex-col gap-4 max-w-[280px]">
+                                <PrimaryButton onClick={handleLogin} disabled={isLoading}>
+                                    <div className="flex items-center justify-center gap-2">
+                                        {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Wallet size={20} />}
+                                        {isLoading ? "Signing in..." : "Login with Pi Network"}
+                                    </div>
+                                </PrimaryButton>
+                                <SecondaryButton disabled={isLoading}>
+                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                </SecondaryButton>
+                            </div>
                         </div>
                     </div>
                 );
 
             case "walletInput":
                 return (
-                    <div className="w-full max-w-md flex flex-col gap-y-10 p-4">
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1>Wallet Address</h1>
-                            <p className="text-center font-medium">Enter your wallet address</p>
-                        </div>
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col gap-y-8">
+                            <div className="flex flex-col items-center gap-y-2 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Wallet Address</h1>
+                                <p className="text-gray-600 text-sm">Enter your wallet address</p>
+                            </div>
 
-                        <input
-                            type="text"
-                            className="w-full bg-white p-3 rounded-lg text-black font-mono text-sm"
-                            placeholder="Paste full address (56 characters, starts with G)"
-                            value={walletAddress}
-                            maxLength={56}
-                            onChange={(e) => setWalletAddress(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
-                        />
-                        <p className="text-xs text-white/80">
-                            Use copy-paste. Full address is 56 characters. Avoid mixing 0 (zero) and O (letter).
-                        </p>
+                            <div className="flex flex-col gap-y-3">
+                                <input
+                                    type="text"
+                                    className="w-full bg-gray-50 border-2 border-violet-100 rounded-xl p-4 text-gray-800 font-mono text-sm placeholder:text-gray-400 focus:border-violet-300 focus:ring-2 focus:ring-violet-100 focus:outline-none transition-colors"
+                                    placeholder="Paste full address (56 characters, starts with G)"
+                                    value={walletAddress}
+                                    maxLength={56}
+                                    onChange={(e) => setWalletAddress(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
+                                />
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    Use copy-paste. Full address is 56 characters. Avoid mixing 0 (zero) and O (letter).
+                                </p>
+                            </div>
 
-                        <div className="w-full flex flex-col items-center gap-y-4">
-                            <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
-                                <div className="flex items-center justify-center gap-2">
-                                    {isLoading && <Loader2 size={20} className="animate-spin" />}
-                                    Confirm Address
-                                </div>
-                            </PrimaryButton>
-
-                            <SecondaryButton disabled={isLoading}>
-                                <Link href="/ecosystem">Cancel</Link>
-                            </SecondaryButton>
+                            <div className="w-full flex flex-col gap-4">
+                                <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
+                                    <div className="flex items-center justify-center gap-2">
+                                        {isLoading && <Loader2 size={20} className="animate-spin" />}
+                                        Confirm Address
+                                    </div>
+                                </PrimaryButton>
+                                <SecondaryButton disabled={isLoading}>
+                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                </SecondaryButton>
+                            </div>
                         </div>
                     </div>
                 );
@@ -179,49 +191,57 @@ export default function PiAppClient() {
 
             case "success":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
-                        <div className="rounded-full w-18 h-18 flex justify-center items-center bg-green-600">
-                            <Check size={40} />
-                        </div>
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
+                            <div className="rounded-full w-16 h-16 flex justify-center items-center bg-emerald-400 text-white shadow-lg shadow-emerald-200/50">
+                                <Check size={36} strokeWidth={2.5} />
+                            </div>
 
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1>Transfer Complete!</h1>
-                            <p className="text-center font-medium">0.01 Pi has been sent to your wallet</p>
-                        </div>
+                            <div className="flex flex-col items-center gap-y-2 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Transfer Complete!</h1>
+                                <p className="text-gray-600">0.01 Pi has been sent to your wallet</p>
+                            </div>
 
-                        <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
-                                <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
-                            </a>
-                        </div>
+                            <div className="relative w-full h-56 bg-gray-100 rounded-xl overflow-hidden flex justify-center items-center">
+                                <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer" className="block w-full h-full">
+                                    <Image src={"/ad.webp"} alt={"ads"} fill className="object-cover rounded-xl" />
+                                </a>
+                            </div>
 
-                        <PrimaryButton>
-                            <Link href="/ecosystem">Continue</Link>
-                        </PrimaryButton>
+                            <div className="w-full max-w-[280px]">
+                                <PrimaryButton>
+                                    <Link href="/ecosystem" className="block">Continue</Link>
+                                </PrimaryButton>
+                            </div>
+                        </div>
                     </div>
                 );
 
             case "error":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center gap-y-10 p-4">
-                        <div className="rounded-full w-18 h-18 flex justify-center items-center bg-red-600">
-                            <X size={40} />
-                        </div>
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
+                            <div className="rounded-full w-16 h-16 flex justify-center items-center bg-rose-400 text-white shadow-lg shadow-rose-200/50">
+                                <X size={36} strokeWidth={2.5} />
+                            </div>
 
-                        <div className="flex flex-col items-center gap-y-2">
-                            <h1>Error Occurred!</h1>
-                            <p className="text-center font-medium">The blockchain is busy right now. Please try again!</p>
-                        </div>
+                            <div className="flex flex-col items-center gap-y-2 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Error Occurred!</h1>
+                                <p className="text-gray-600">The blockchain is busy right now. Please try again!</p>
+                            </div>
 
-                        <div className="relative w-full h-60 bg-[rgba(255,255,255,0.2)] flex justify-center items-center rounded-md">
-                            <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer">
-                                <Image src={"/ad.webp"} alt={"ads"} fill className="rounded-md" />
-                            </a>
-                        </div>
+                            <div className="relative w-full h-56 bg-gray-100 rounded-xl overflow-hidden flex justify-center items-center">
+                                <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer" className="block w-full h-full">
+                                    <Image src={"/ad.webp"} alt={"ads"} fill className="object-cover rounded-xl" />
+                                </a>
+                            </div>
 
-                        <PrimaryButton>
-                            <Link href="/ecosystem">Continue</Link>
-                        </PrimaryButton>
+                            <div className="w-full max-w-[280px]">
+                                <PrimaryButton>
+                                    <Link href="/ecosystem" className="block">Continue</Link>
+                                </PrimaryButton>
+                            </div>
+                        </div>
                     </div>
                 );
 
@@ -244,8 +264,13 @@ export default function PiAppClient() {
         <div className="w-full flex justify-center items-center">
             {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
             {toast && (
-                <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">
-                    <p className={clsx("mx-4 text-sm font-semibold py-2 px-6 rounded-sm leading-relaxed tracking-wide", toast.type === "error" ? "bg-red-600" : "bg-green-600")}>
+                <div className="absolute top-20 left-0 right-0 z-50 w-fit mx-auto px-4">
+                    <p className={clsx(
+                        "text-sm font-semibold py-3 px-5 rounded-xl shadow-lg leading-relaxed tracking-wide",
+                        toast.type === "error"
+                            ? "bg-rose-400 text-white shadow-rose-200/50"
+                            : "bg-emerald-400 text-white shadow-emerald-200/50"
+                    )}>
                         {toast.message}
                     </p>
                 </div>

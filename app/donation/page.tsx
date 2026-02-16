@@ -63,67 +63,75 @@ const DonationPage = () => {
     return (
         <>
             {toast && (
-                <div className="absolute top-5 left-0 right-0 z-50 w-fit mx-auto">
-                    <p className={clsx("mx-4 text-sm font-semibold py-2 px-6 rounded-sm leading-relaxed tracking-wide", toast.type === "error" ? "bg-red-600" : "bg-green-600")}>
+                <div className="absolute top-20 left-0 right-0 z-50 w-fit mx-auto px-4">
+                    <p className={clsx(
+                        "text-sm font-semibold py-3 px-5 rounded-xl shadow-lg leading-relaxed tracking-wide",
+                        toast.type === "error"
+                            ? "bg-rose-400 text-white shadow-rose-200/50"
+                            : "bg-emerald-400 text-white shadow-emerald-200/50"
+                    )}>
                         {toast.message}
                     </p>
                 </div>
             )}
 
-            <div className="max-w-md mx-auto p-4 flex flex-col justify-between space-y-6">
-                <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Donation</h2>
+            <div className="max-w-md mx-auto p-6 flex flex-col gap-6">
+                <div className="bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-6 text-center">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Donation</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">Your donation helps pioneers unlock their Pi and keeps our service free for everyone.</p>
                 </div>
 
-                <div className="flex-1">
-                    <div className="bg-white rounded-2xl shadow-lg p-6">
-                        <div className="mb-6">
-                            <label className="block text-sm font-semibold text-gray-900 mb-3">Select Amount</label>
-                            <div className="grid grid-cols-3 gap-3 mb-4">
-                                {PRESET_AMOUNTS.map((amount) => (
-                                    <button
-                                        key={amount}
-                                        onClick={() => setSelectedAmount(amount)}
-                                        className={clsx(
-                                            "py-3 px-4 text-sm rounded-lg border transition-colors font-semibold",
-                                            selectedAmount === amount ? "border-blue-600 bg-blue-50 text-blue-600" : "border-gray-200 text-gray-700 hover:border-gray-300"
-                                        )}>
-                                        {amount} π
-                                    </button>
-                                ))}
-                            </div>
-
-                            <input
-                                type="text"
-                                inputMode="decimal"
-                                value={selectedAmount}
-                                onChange={(e) => {
-                                    let value = e.target.value.replace(/[^0-9.]/g, "");
-
-                                    // Prevent multiple dots
-                                    const parts = value.split(".");
-                                    if (parts.length > 2) value = `${parts[0]}.${parts[1]}`;
-
-                                    setSelectedAmount(value);
-                                }}
-                                placeholder="Enter custom amount (π)"
-                                className={clsx(
-                                    "w-full py-3 border rounded-lg focus:ring-2 text-center text-sm font-semibold",
-                                    isValidAmount ? "border-gray-200 focus:ring-blue-500 focus:border-transparent text-black" : "border-red-400 text-red-600"
-                                )}
-                            />
-                            {!isValidAmount && selectedAmount && <p className="text-sm text-red-500 mt-1">Minimum donation is {MIN_DONATION} π</p>}
+                <div className="bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-6">
+                    <div className="mb-6">
+                        <label className="block text-sm font-semibold text-gray-800 mb-3">Select Amount</label>
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                            {PRESET_AMOUNTS.map((amount) => (
+                                <button
+                                    key={amount}
+                                    onClick={() => setSelectedAmount(amount)}
+                                    className={clsx(
+                                        "py-3 px-4 text-sm rounded-xl border-2 transition-all font-semibold",
+                                        selectedAmount === amount
+                                            ? "border-violet-400 bg-violet-50 text-violet-700 shadow-sm"
+                                            : "border-violet-100 text-gray-700 hover:border-violet-200 hover:bg-violet-50/50"
+                                    )}>
+                                    {amount} π
+                                </button>
+                            ))}
                         </div>
 
-                        <PrimaryButton
-                            onClick={handleDonate}
-                            disabled={!isValidAmount || isLoading}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg shadow-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform flex justify-center items-center gap-x-2">
-                            {isLoading && <Loader2 size={20} className="animate-spin" />}
-                            {isLoading ? "Donating..." : "Donate"}
-                        </PrimaryButton>
+                        <input
+                            type="text"
+                            inputMode="decimal"
+                            value={selectedAmount}
+                            onChange={(e) => {
+                                let value = e.target.value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) value = `${parts[0]}.${parts[1]}`;
+
+                                setSelectedAmount(value);
+                            }}
+                            placeholder="Enter custom amount (π)"
+                            className={clsx(
+                                "w-full py-3 px-4 border-2 rounded-xl text-center text-sm font-semibold focus:ring-2 focus:ring-violet-100 focus:outline-none transition-colors",
+                                isValidAmount
+                                    ? "border-violet-100 text-gray-800 focus:border-violet-300"
+                                    : "border-rose-300 text-rose-600 focus:border-rose-400"
+                            )}
+                        />
+                        {!isValidAmount && selectedAmount && (
+                            <p className="text-sm text-rose-500 mt-2">Minimum donation is {MIN_DONATION} π</p>
+                        )}
                     </div>
+
+                    <PrimaryButton
+                        onClick={handleDonate}
+                        disabled={!isValidAmount || isLoading}
+                        className="flex justify-center items-center gap-x-2">
+                        {isLoading && <Loader2 size={20} className="animate-spin" />}
+                        {isLoading ? "Donating..." : "Donate"}
+                    </PrimaryButton>
                 </div>
             </div>
         </>

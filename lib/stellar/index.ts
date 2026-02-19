@@ -65,6 +65,40 @@ function isWalletBlocked(normalizedWallet: string): boolean {
     return getBlockedWallets().includes(normalizedWallet);
 }
 
+/** Map Stellar/Horizon error codes to user-friendly messages. */
+function getStellarErrorMessage(raw: string): string {
+    const lower = raw.toLowerCase();
+    if (lower.includes("op_underfunded") || lower.includes("op_low_reserve")) {
+        return "The faucet is temporarily low on funds. Please try again later.";
+    }
+    if (lower.includes("op_no_destination") || lower.includes("op_no_account")) {
+        return "This address doesn't exist on the Pi Network yet. Use your mainnet wallet from the Pi app.";
+    }
+    if (lower.includes("tx_bad_auth") || lower.includes("tx_bad_seq")) {
+        return "Transaction failed. Please try again.";
+    }
+    if (lower.includes("tx_insufficient_fee")) {
+        return "Transaction failed. Please try again.";
+    }
+    if (lower.includes("timeout") || lower.includes("etimedout") || lower.includes("econnrefused") || lower.includes("network") || lower.includes("fetch failed")) {
+        return "Connection error. Please check your network and try again.";
+    }
+    return "Transaction failed. Please try again.";
+}
+
+/** Map generic errors (DB, network) to user-friendly messages. */
+function getGenericErrorMessage(err: unknown): string {
+    const msg = err instanceof Error ? err.message : String(err);
+    const lower = msg.toLowerCase();
+    if (lower.includes("econnrefused") || lower.includes("etimedout") || lower.includes("enotfound") || lower.includes("network") || lower.includes("fetch failed")) {
+        return "Connection error. Please check your network and try again.";
+    }
+    if (lower.includes("mongo") || lower.includes("database")) {
+        return "Database error. Please try again later.";
+    }
+    return "Something went wrong. Please try again later.";
+}
+
 export async function checkWalletAddress(
     walletAddress: string,
     options?: { piUid?: string; piWalletAddress?: string }
@@ -199,7 +233,7 @@ export async function checkWalletAddress(
     } catch (err: unknown) {
         return {
             success: false,
-            message: err instanceof Error ? err.message : "Unexpected db error",
+            message: getGenericErrorMessage(err),
         };
     }
 
@@ -214,7 +248,7 @@ export async function checkWalletAddress(
         }
         return {
             success: false,
-            message: "Wallet address not found on the Stellar network",
+            message: "This address doesn't exist on the Pi Network yet. Use your mainnet wallet from the Pi app.",
         };
     }
 
@@ -284,15 +318,14 @@ export async function createTransaction(walletAddress: string, piUid?: string) {
             { recipientWallet: normalizedWallet, status: "processing" },
             { $set: { status: "pending" } }
         );
-        const message =
-            error && typeof error === "object" && "response" in error
-                ? String(
-                      (error as { response?: { data?: { extras?: { result_codes?: string } } } }).response?.data?.extras?.result_codes ??
-                          (error instanceof Error ? error.message : "Unexpected error occurred")
-                  )
-                : error instanceof Error
-                  ? error.message
-                  : "Unexpected error occurred";
+        let rawMessage: string;
+        if (error && typeof error === "object" && "response" in error) {
+            const resultCodes = (error as { response?: { data?: { extras?: { result_codes?: string } } } }).response?.data?.extras?.result_codes;
+            rawMessage = resultCodes ? String(resultCodes) : (error instanceof Error ? error.message : "Unexpected error occurred");
+        } else {
+            rawMessage = error instanceof Error ? error.message : "Unexpected error occurred";
+        }
+        const message = getStellarErrorMessage(rawMessage);
         return {
             success: false,
             message,

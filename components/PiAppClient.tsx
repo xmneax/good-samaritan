@@ -182,7 +182,7 @@ export default function PiAppClient() {
                     <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
                         <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col gap-y-8">
                             <div className="flex flex-col items-center gap-y-2 text-center">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Claim 0.01 π</h1>
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Claim 0.01 Pi</h1>
                                 <p className="text-gray-600 text-sm">
                                     Sending to your Pi wallet
                                 </p>

@@ -14,25 +14,14 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
                 </DialogHeader>
 
                 <div className="space-y-5 text-gray-600">
-                    <p className="leading-relaxed">
-                        Many Pioneers face a common issue: they lack the crucial <span className="font-semibold text-violet-600">0.01 Pi</span> required to move their locked-up
-                        funds to their available balance. This app is designed to help you overcome that hurdle!
-                    </p>
-
-                    <p className="leading-relaxed">Here&#39;s how you can get your lockups released:</p>
+                    <p className="leading-relaxed">Get 0.01 Pi in two steps:</p>
 
                     <ol className="list-decimal list-inside space-y-3 pl-1">
                         <li>
-                            <span className="font-semibold text-gray-800">Login with Pi:</span> Connect your Pi Network account to verify ownership.
+                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account.
                         </li>
                         <li>
-                            <span className="font-semibold text-gray-800">Enter Wallet Address:</span> Provide your Pi wallet address for verification.
-                        </li>
-                        <li>
-                            <span className="font-semibold text-gray-800">Watch an Ad:</span> A short ad will play. Watching it fully helps support the ecosystem.
-                        </li>
-                        <li>
-                            <span className="font-semibold text-gray-800">Receive 0.01 Pi:</span> Once the ad is complete, we&#39;ll send 0.01 Pi to your wallet, enabling your lockup release!
+                            <span className="font-semibold text-gray-800">Claim</span> – Receive 0.01 Pi to your wallet and release your lockups.
                         </li>
                     </ol>
                 </div>

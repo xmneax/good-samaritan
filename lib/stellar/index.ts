@@ -146,7 +146,7 @@ export async function checkWalletAddress(
                 if (!isWhitelisted && hasEverCompleted) {
                     return {
                         success: false,
-                        message: "This wallet has already received the faucet. Each wallet can only claim 0.01 π once.",
+                        message: "This wallet has already received the faucet. Each wallet can only claim 0.01 Pi once.",
                     };
                 }
             }

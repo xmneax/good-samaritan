@@ -35,7 +35,7 @@ const DonationPage = () => {
 
     const handleDonate = async () => {
         if (!isValidAmount) {
-            return setToast({ type: "error", message: `Minimum donation is ${MIN_DONATION} π.` });
+            return setToast({ type: "error", message: `Minimum donation is ${MIN_DONATION} Pi.` });
         }
 
         setIsLoading(true);
@@ -95,7 +95,7 @@ const DonationPage = () => {
                                             ? "border-violet-400 bg-violet-50 text-violet-700 shadow-sm"
                                             : "border-violet-100 text-gray-700 hover:border-violet-200 hover:bg-violet-50/50"
                                     )}>
-                                    {amount} π
+                                    {amount} Pi
                                 </button>
                             ))}
                         </div>
@@ -112,7 +112,7 @@ const DonationPage = () => {
 
                                 setSelectedAmount(value);
                             }}
-                            placeholder="Enter custom amount (π)"
+                            placeholder="Enter custom amount (Pi)"
                             className={clsx(
                                 "w-full py-3 px-4 border-2 rounded-xl text-center text-sm font-semibold focus:ring-2 focus:ring-violet-100 focus:outline-none transition-colors",
                                 isValidAmount
@@ -121,7 +121,7 @@ const DonationPage = () => {
                             )}
                         />
                         {!isValidAmount && selectedAmount && (
-                            <p className="text-sm text-rose-500 mt-2">Minimum donation is {MIN_DONATION} π</p>
+                            <p className="text-sm text-rose-500 mt-2">Minimum donation is {MIN_DONATION} Pi</p>
                         )}
                     </div>
 

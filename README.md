@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**Good Samaritan** – Pi Network faucet app: get 0.01 π to unlock lockups (with Pi login, one claim per Pi account and per wallet, ever).
+**Good Samaritan** – Pi Network faucet app: get 0.01 Pi to unlock lockups (with Pi login, one claim per Pi account and per wallet, ever).
 
 ## Setup
 
@@ -11,11 +11,11 @@ Create a `.env.local` (or `.env`) in the project root with:
 | Variable | Description |
 |----------|-------------|
 | `MONGODB_URI` | MongoDB connection string |
-| `PI_WALLET_PRIVATE_SEED` | Stellar secret key for the app wallet (sends 0.01 π) |
+| `PI_WALLET_PRIVATE_SEED` | Stellar secret key for the app wallet (sends 0.01 Pi) |
 | `PI_API_URL` | Pi payments API base URL |
 | `PI_API_KEY` | Pi API key for payment approve/complete |
 | `NEXT_PUBLIC_PINET_URL` | (Optional) Partner link URL, e.g. Boostr.space |
-| `PI_WHITELISTED_WALLETS` | (Optional) Comma-separated wallet addresses that can always receive 0.01 π (bypass once-ever limit) |
+| `PI_WHITELISTED_WALLETS` | (Optional) Comma-separated wallet addresses that can always receive 0.01 Pi (bypass once-ever limit) |
 | `PI_BLOCKED_WALLETS` | (Optional) Comma-separated wallet addresses that are never allowed to claim |
 
 Do not commit `.env*`; they are gitignored.

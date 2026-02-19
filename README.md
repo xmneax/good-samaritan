@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**Good Samaritan** – Pi Network faucet app: get 0.01 π to unlock lockups (with Pi login, one claim per account per 14 days).
+**Good Samaritan** – Pi Network faucet app: get 0.01 π to unlock lockups (with Pi login, one claim per Pi account and per wallet, ever).
 
 ## Setup
 
@@ -15,9 +15,20 @@ Create a `.env.local` (or `.env`) in the project root with:
 | `PI_API_URL` | Pi payments API base URL |
 | `PI_API_KEY` | Pi API key for payment approve/complete |
 | `NEXT_PUBLIC_PINET_URL` | (Optional) Partner link URL, e.g. Boostr.space |
-| `PI_WHITELISTED_WALLETS` | (Optional) Comma-separated wallet addresses that can always receive 0.01 π (bypass 14-day and balance checks) |
+| `PI_WHITELISTED_WALLETS` | (Optional) Comma-separated wallet addresses that can always receive 0.01 π (bypass once-ever limit) |
+| `PI_BLOCKED_WALLETS` | (Optional) Comma-separated wallet addresses that are never allowed to claim |
 
 Do not commit `.env*`; they are gitignored.
+
+**Recommended:** Add known abusers to `PI_BLOCKED_WALLETS` (e.g. `GDS6LSN64APSNZTMNJWP2Q4F7NZPNMDRMQNJVJKKZ5HVNNS346K4YMAI`).
+
+### Migrate existing data (optional)
+
+To normalize `recipientWallet` in existing transactions to uppercase (recommended for consistency):
+
+```bash
+node --env-file=.env.local scripts/migrate-recipient-wallet-normalize.mjs
+```
 
 ### Run locally
 

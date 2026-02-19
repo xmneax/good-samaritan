@@ -14,7 +14,7 @@ export default function Terms() {
                 <ul className="list-disc list-inside">
                     <li>You must log in with a valid Pi account to use the faucet.</li>
                     <li>Wallet address must match your authenticated Pi account when we have it on file.</li>
-                    <li>Limit: one claim per Pi account and per wallet every 14 days.</li>
+                    <li>Limit: one claim per Pi account and per wallet, ever.</li>
                 </ul>
 
                 <h2 className="mt-6 font-semibold text-gray-800">3. Use of Ads</h2>

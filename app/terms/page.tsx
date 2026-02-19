@@ -17,19 +17,16 @@ export default function Terms() {
                     <li>Limit: one claim per Pi account and per wallet, ever.</li>
                 </ul>
 
-                <h2 className="mt-6 font-semibold text-gray-800">3. Use of Ads</h2>
-                <p>You must watch the ad completely. Skipping or exiting cancels the transaction.</p>
-
-                <h2 className="mt-6 font-semibold text-gray-800">4. Abuse Prevention</h2>
+                <h2 className="mt-6 font-semibold text-gray-800">3. Abuse Prevention</h2>
                 <p>Attempts to cheat, automate, or fake access will result in bans.</p>
 
-                <h2 className="mt-6 font-semibold text-gray-800">5. Donations</h2>
+                <h2 className="mt-6 font-semibold text-gray-800">4. Donations</h2>
                 <p>You may donate Pi after your issue is resolved. It&#39;s optional and appreciated.</p>
 
-                <h2 className="mt-6 font-semibold text-gray-800">6. No Guarantees</h2>
+                <h2 className="mt-6 font-semibold text-gray-800">5. No Guarantees</h2>
                 <p>We do not guarantee availability or success of the transaction.</p>
 
-                <h2 className="mt-6 font-semibold text-gray-800">7. Liability</h2>
+                <h2 className="mt-6 font-semibold text-gray-800">6. Liability</h2>
                 <p>We are not liable for losses caused by bugs, misuse, or third-party issues.</p>
             </div>
         </main>

@@ -10,9 +10,8 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
 import { signIn } from "@/app/actions";
-import { AdsSection } from "@/components/AdsSection";
 import Link from "next/link";
-import { checkWalletAddress } from "@/lib/stellar";
+import { checkWalletAddress, createTransaction } from "@/lib/stellar";
 
 export type Toast = {
     type: "success" | "error";
@@ -21,7 +20,7 @@ export type Toast = {
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("welcome"); // welcome, login, claim, walletInput, adView, success, error
+    const [appStage, setAppStage] = useState("welcome"); // welcome, login, claim, walletInput, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -78,16 +77,21 @@ export default function PiAppClient() {
     const handleClaim = async () => {
         if (!user?.wallet) return;
         setIsLoading(true);
-        const result = await checkWalletAddress(user.wallet, {
+        const checkResult = await checkWalletAddress(user.wallet, {
             piUid: user.uid,
             piWalletAddress: user.wallet,
         });
-        if (result.success) {
+        if (!checkResult.success) {
             setIsLoading(false);
-            handleStage("adView");
+            return setToast({ type: "error", message: checkResult.message });
+        }
+        const txResult = await createTransaction(user.wallet, user.uid);
+        setIsLoading(false);
+        if (txResult.success) {
+            handleStage("success");
         } else {
-            setIsLoading(false);
-            setToast({ type: "error", message: result.message });
+            setToast({ type: "error", message: txResult.message });
+            handleStage("error");
         }
     };
 
@@ -104,17 +108,23 @@ export default function PiAppClient() {
             return setToast({ type: "error", message: "Invalid wallet address. Wallet address length too short." });
         }
 
-        const result = await checkWalletAddress(walletAddress, {
+        const checkResult = await checkWalletAddress(walletAddress, {
             piUid: user?.uid,
             piWalletAddress: user?.wallet,
         });
 
-        if (result.success) {
+        if (!checkResult.success) {
             setIsLoading(false);
-            handleStage("adView");
+            return setToast({ type: "error", message: checkResult.message });
+        }
+
+        const txResult = await createTransaction(walletAddress, user?.uid);
+        setIsLoading(false);
+        if (txResult.success) {
+            handleStage("success");
         } else {
-            setIsLoading(false);
-            setToast({ type: "error", message: result.message });
+            setToast({ type: "error", message: txResult.message });
+            handleStage("error");
         }
     };
 
@@ -187,7 +197,7 @@ export default function PiAppClient() {
                                 <PrimaryButton onClick={handleClaim} disabled={isLoading}>
                                     <div className="flex items-center justify-center gap-2">
                                         {isLoading && <Loader2 size={20} className="animate-spin" />}
-                                        {isLoading ? "Checking..." : "Claim"}
+                                        {isLoading ? "Sending..." : "Claim"}
                                     </div>
                                 </PrimaryButton>
                                 <button
@@ -235,7 +245,7 @@ export default function PiAppClient() {
                                 <PrimaryButton onClick={handleWalletAddress} disabled={isLoading || !walletAddress}>
                                     <div className="flex items-center justify-center gap-2">
                                         {isLoading && <Loader2 size={20} className="animate-spin" />}
-                                        Confirm Address
+                                        {isLoading ? "Sending..." : "Confirm Address"}
                                     </div>
                                 </PrimaryButton>
                                 <SecondaryButton disabled={isLoading}>
@@ -244,16 +254,6 @@ export default function PiAppClient() {
                             </div>
                         </div>
                     </div>
-                );
-
-            case "adView":
-                return (
-                    <AdsSection
-                        walletAddress={walletAddress}
-                        piUid={user?.uid}
-                        setAppStage={setAppStage}
-                        setToast={setToast}
-                    />
                 );
 
             case "success":
@@ -269,16 +269,25 @@ export default function PiAppClient() {
                                 <p className="text-gray-600">0.01 Pi has been sent to your wallet</p>
                             </div>
 
-                            <div className="relative w-full h-56 bg-gray-100 rounded-xl overflow-hidden flex justify-center items-center">
-                                <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer" className="block w-full h-full">
-                                    <Image src={"/ad.webp"} alt={"ads"} fill className="object-cover rounded-xl" />
+                            <div className="w-full flex flex-col gap-3 max-w-[280px]">
+                                <a
+                                    href="https://pinet.com"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="w-full py-3 px-5 rounded-xl font-semibold tracking-wide transition-all duration-200 bg-violet-500 text-white shadow-sm shadow-violet-200/50 hover:bg-violet-600 hover:shadow-md hover:shadow-violet-200/60 active:scale-[0.98] text-center block"
+                                >
+                                    Pi Ecosystem
                                 </a>
-                            </div>
-
-                            <div className="w-full max-w-[280px]">
-                                <PrimaryButton>
-                                    <Link href="/ecosystem" className="block">Continue</Link>
-                                </PrimaryButton>
+                                {process.env.NEXT_PUBLIC_PINET_URL && (
+                                    <a
+                                        href={process.env.NEXT_PUBLIC_PINET_URL}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="w-full py-3 px-5 rounded-xl font-semibold tracking-wide transition-all duration-200 bg-white/80 text-violet-700 border-2 border-violet-200 hover:bg-violet-50 hover:border-violet-300 active:scale-[0.98] text-center block"
+                                    >
+                                        Visit Boostr
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -297,16 +306,25 @@ export default function PiAppClient() {
                                 <p className="text-gray-600">The blockchain is busy right now. Please try again!</p>
                             </div>
 
-                            <div className="relative w-full h-56 bg-gray-100 rounded-xl overflow-hidden flex justify-center items-center">
-                                <a href={process.env.NEXT_PUBLIC_PINET_URL} target="_blank" rel="noreferrer" className="block w-full h-full">
-                                    <Image src={"/ad.webp"} alt={"ads"} fill className="object-cover rounded-xl" />
+                            <div className="w-full flex flex-col gap-3 max-w-[280px]">
+                                <a
+                                    href="https://pinet.com"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="w-full py-3 px-5 rounded-xl font-semibold tracking-wide transition-all duration-200 bg-violet-500 text-white shadow-sm shadow-violet-200/50 hover:bg-violet-600 hover:shadow-md hover:shadow-violet-200/60 active:scale-[0.98] text-center block"
+                                >
+                                    Pi Ecosystem
                                 </a>
-                            </div>
-
-                            <div className="w-full max-w-[280px]">
-                                <PrimaryButton>
-                                    <Link href="/ecosystem" className="block">Continue</Link>
-                                </PrimaryButton>
+                                {process.env.NEXT_PUBLIC_PINET_URL && (
+                                    <a
+                                        href={process.env.NEXT_PUBLIC_PINET_URL}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="w-full py-3 px-5 rounded-xl font-semibold tracking-wide transition-all duration-200 bg-white/80 text-violet-700 border-2 border-violet-200 hover:bg-violet-50 hover:border-violet-300 active:scale-[0.98] text-center block"
+                                    >
+                                        Visit Boostr
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>

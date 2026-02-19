@@ -21,7 +21,7 @@ export type Toast = {
 
 export default function PiAppClient() {
     const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("welcome"); // welcome, login, walletInput, adView, success, error
+    const [appStage, setAppStage] = useState("welcome"); // welcome, login, claim, walletInput, adView, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +34,11 @@ export default function PiAppClient() {
     };
 
     const handleLogin = async () => {
-        if (user) return handleStage("walletInput");
+        if (user) {
+            const nextStage = user.wallet ? "claim" : "walletInput";
+            if (user.wallet) setWalletAddress(user.wallet);
+            return handleStage(nextStage);
+        }
 
         try {
             setIsLoading(true);
@@ -52,9 +56,15 @@ export default function PiAppClient() {
                 return setToast({ type: "error", message: response.message });
             }
 
+            const userData = response.data as User;
             setIsLoading(false);
-            setUser(response.data as User);
-            handleStage("walletInput");
+            setUser(userData);
+            if (userData.wallet) {
+                setWalletAddress(userData.wallet);
+                handleStage("claim");
+            } else {
+                handleStage("walletInput");
+            }
         } catch (error) {
             console.error("Sign in error:", error);
             setIsLoading(false);
@@ -62,6 +72,22 @@ export default function PiAppClient() {
                 type: "error",
                 message: error instanceof Error ? error.message : "An error occurred while signing in. Please try again!",
             });
+        }
+    };
+
+    const handleClaim = async () => {
+        if (!user?.wallet) return;
+        setIsLoading(true);
+        const result = await checkWalletAddress(user.wallet, {
+            piUid: user.uid,
+            piWalletAddress: user.wallet,
+        });
+        if (result.success) {
+            setIsLoading(false);
+            handleStage("adView");
+        } else {
+            setIsLoading(false);
+            setToast({ type: "error", message: result.message });
         }
     };
 
@@ -123,7 +149,7 @@ export default function PiAppClient() {
                             <div className="flex flex-col items-center gap-y-3 text-center">
                                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Login with Pi</h1>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-sm">
-                                    Connect your Pi Network account to continue. You must sign in before entering your wallet.
+                                    Connect your Pi Network account to continue.
                                 </p>
                             </div>
                             <div className="w-full flex flex-col gap-4 max-w-[280px]">
@@ -133,6 +159,47 @@ export default function PiAppClient() {
                                         {isLoading ? "Signing in..." : "Login with Pi Network"}
                                     </div>
                                 </PrimaryButton>
+                                <SecondaryButton disabled={isLoading}>
+                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                </SecondaryButton>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case "claim":
+                return (
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col gap-y-8">
+                            <div className="flex flex-col items-center gap-y-2 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Claim 0.01 π</h1>
+                                <p className="text-gray-600 text-sm">
+                                    Sending to your Pi wallet
+                                </p>
+                                {user?.wallet && (
+                                    <p className="text-gray-500 font-mono text-xs break-all px-2">
+                                        {user.wallet.slice(0, 12)}...{user.wallet.slice(-8)}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="w-full flex flex-col gap-4 max-w-[280px]">
+                                <PrimaryButton onClick={handleClaim} disabled={isLoading}>
+                                    <div className="flex items-center justify-center gap-2">
+                                        {isLoading && <Loader2 size={20} className="animate-spin" />}
+                                        {isLoading ? "Checking..." : "Claim"}
+                                    </div>
+                                </PrimaryButton>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setWalletAddress("");
+                                        handleStage("walletInput");
+                                    }}
+                                    className="text-sm text-violet-600 hover:text-violet-700 underline"
+                                >
+                                    Use different wallet
+                                </button>
                                 <SecondaryButton disabled={isLoading}>
                                     <Link href="/ecosystem" className="block">Cancel</Link>
                                 </SecondaryButton>

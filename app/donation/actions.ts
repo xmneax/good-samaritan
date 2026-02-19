@@ -57,11 +57,11 @@ export async function onReadyForServerCompletion(paymentId: string, txid: string
 export async function onCancel(paymentId: string) {
     console.log(`${paymentId} cancelled`);
 
-    redirect("/ecosystem");
+    redirect("/");
 }
 
 export async function onError(error: any, payment: PaymentDTO) {
     console.log(error);
 
-    redirect("/ecosystem");
+    redirect("/");
 }

@@ -170,7 +170,7 @@ export default function PiAppClient() {
                                     </div>
                                 </PrimaryButton>
                                 <SecondaryButton disabled={isLoading}>
-                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                    <Link href="/" className="block">Cancel</Link>
                                 </SecondaryButton>
                             </div>
                         </div>
@@ -211,7 +211,7 @@ export default function PiAppClient() {
                                     Use different wallet
                                 </button>
                                 <SecondaryButton disabled={isLoading}>
-                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                    <Link href="/" className="block">Cancel</Link>
                                 </SecondaryButton>
                             </div>
                         </div>
@@ -249,7 +249,7 @@ export default function PiAppClient() {
                                     </div>
                                 </PrimaryButton>
                                 <SecondaryButton disabled={isLoading}>
-                                    <Link href="/ecosystem" className="block">Cancel</Link>
+                                    <Link href="/" className="block">Cancel</Link>
                                 </SecondaryButton>
                             </div>
                         </div>

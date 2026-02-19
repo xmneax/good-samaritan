@@ -35,9 +35,6 @@ export default function RootLayout({
                         <Link href="/" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
                             Home
                         </Link>
-                        <Link href="/ecosystem" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
-                            Ecosystem
-                        </Link>
                         <Link href="/donation" className="text-gray-700 font-semibold py-2 px-3 rounded-lg hover:bg-violet-100/80 hover:text-violet-700 transition-colors">
                             Donate
                         </Link>

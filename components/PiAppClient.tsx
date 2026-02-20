@@ -5,7 +5,6 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import { User } from "@/lib/mongodb/types";
 import { Check, Loader2, Wallet, X } from "lucide-react";
-import WelcomeModal from "@/components/WelcomeModal";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { onIncompletePaymentFound } from "@/lib/pinetwork/callbacks";
@@ -19,18 +18,13 @@ export type Toast = {
 };
 
 export default function PiAppClient() {
-    const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-    const [appStage, setAppStage] = useState("welcome"); // welcome, login, claim, walletInput, success, error
+    const [appStage, setAppStage] = useState("welcome"); // welcome, claim, walletInput, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
 
     const handleStage = (stage: string) => setAppStage(stage);
-
-    const handleWelcomeModalClose = () => {
-        setShowWelcomeModal(false);
-    };
 
     const handleLogin = async () => {
         if (user) {
@@ -142,30 +136,24 @@ export default function PiAppClient() {
                                 <Image src={"/logo.png"} alt={"logo"} width={96} height={96} className="rounded-2xl" />
                             </div>
 
-                            <div className="flex flex-col items-center gap-y-3 text-center">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Good Samaritan</h1>
+                            <div className="flex flex-col items-center gap-y-4 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Welcome, Pioneer!</h1>
                                 <p className="text-gray-600 text-base leading-relaxed max-w-sm">
-                                    Need 0.01 Pi to move your lockups? We&#39;ve got you covered!
+                                    Need 0.01 Pi to move your lockups? We&#39;ve got you covered.
                                 </p>
+                                <div className="space-y-2 text-left w-full max-w-sm text-sm text-gray-600">
+                                    <p className="font-medium text-gray-700">Get 0.01 Pi in two steps:</p>
+                                    <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                                        <li>
+                                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account. Your wallet is detected automatically when available.
+                                        </li>
+                                        <li>
+                                            <span className="font-semibold text-gray-800">Claim</span> – One tap to receive 0.01 Pi and release your lockups. If your wallet wasn&apos;t detected, you&apos;ll be asked to enter it first.
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
 
-                            <div className="w-full max-w-[280px]">
-                                <PrimaryButton onClick={() => handleStage("login")}>Get Started</PrimaryButton>
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case "login":
-                return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
-                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
-                            <div className="flex flex-col items-center gap-y-3 text-center">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Login with Pi</h1>
-                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-sm">
-                                    Connect your Pi Network account to continue.
-                                </p>
-                            </div>
                             <div className="w-full flex flex-col gap-4 max-w-[280px]">
                                 <PrimaryButton onClick={handleLogin} disabled={isLoading}>
                                     <div className="flex items-center justify-center gap-2">
@@ -351,7 +339,6 @@ export default function PiAppClient() {
 
     return (
         <div className="w-full flex justify-center items-center">
-            {appStage === "welcome" && <WelcomeModal open={showWelcomeModal} onClose={handleWelcomeModalClose} />}
             {toast && (
                 <div className="absolute top-20 left-0 right-0 z-50 w-fit mx-auto px-4">
                     <p className={clsx(

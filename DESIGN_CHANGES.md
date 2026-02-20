@@ -70,7 +70,7 @@ The Good Samaritan app has been updated with a **soft pastel color palette**, cl
 - `components/buttons/PrimaryButton.tsx` – Violet primary style
 - `components/buttons/SecondaryButton.tsx` – Outlined secondary style
 - `components/PiAppClient.tsx` – Hero, login, wallet, success, error cards; toast styling
-- `components/WelcomeModal.tsx` – White modal, violet accents
+- Welcome content merged into `components/PiAppClient.tsx` (was `WelcomeModal.tsx`)
 - `components/AdsSection.tsx` – Pastel gradient, white content, violet timer/progress
 - `app/donation/page.tsx` – White cards, violet form controls
 - `app/ecosystem/page.tsx` – White cards for ecosystem blocks

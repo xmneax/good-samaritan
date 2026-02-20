@@ -46,9 +46,9 @@ export default function PiAppClient() {
             const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Login request timed out. Please try again using the Pi Browser.")), 15000));
 
             // Add timeout to factor in the user not using Pi Browser
-            const { accessToken } = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
+            const auth = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
 
-            const response = await signIn(accessToken);
+            const response = await signIn(auth.accessToken);
 
             if (!response.success) {
                 setIsLoading(false);
@@ -56,10 +56,14 @@ export default function PiAppClient() {
             }
 
             const userData = response.data as User;
+            const walletFromAuth =
+                (auth as { user?: { wallet_address?: string; wallet?: string } }).user?.wallet_address ??
+                (auth as { user?: { wallet_address?: string; wallet?: string } }).user?.wallet;
+            const mergedUser = { ...userData, wallet: userData.wallet ?? walletFromAuth };
             setIsLoading(false);
-            setUser(userData);
-            if (userData.wallet) {
-                setWalletAddress(userData.wallet);
+            setUser(mergedUser);
+            if (mergedUser.wallet) {
+                setWalletAddress(mergedUser.wallet);
                 handleStage("claim");
             } else {
                 handleStage("walletInput");

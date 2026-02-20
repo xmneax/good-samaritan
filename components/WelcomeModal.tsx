@@ -18,10 +18,10 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
 
                     <ol className="list-decimal list-inside space-y-3 pl-1">
                         <li>
-                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account.
+                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account. Your wallet is detected automatically when available.
                         </li>
                         <li>
-                            <span className="font-semibold text-gray-800">Claim</span> – Receive 0.01 Pi to your wallet and release your lockups.
+                            <span className="font-semibold text-gray-800">Claim</span> – One tap to receive 0.01 Pi and release your lockups. If your wallet wasn’t detected, you’ll be asked to enter it first.
                         </li>
                     </ol>
                 </div>

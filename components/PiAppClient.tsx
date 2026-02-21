@@ -152,7 +152,7 @@ export default function PiAppClient() {
                                         </li>
                                     </ol>
                                     <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                                        You may be asked to enter your wallet address. Have it ready by copying it from Pi Browser → Wallet.
+                                        You may be asked to enter your wallet address to ensure the Pi reaches you. Have it ready from Pi Browser → Wallet.
                                     </p>
                                 </div>
                             </div>

@@ -18,11 +18,12 @@ export type Toast = {
 };
 
 export default function PiAppClient() {
-    const [appStage, setAppStage] = useState("welcome"); // welcome, claim, walletInput, success, error
+    const [appStage, setAppStage] = useState("welcome"); // welcome, claim, walletInput, success, error, debug
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
+    const [debugInfo, setDebugInfo] = useState<string>("");
 
     const handleStage = (stage: string) => setAppStage(stage);
 
@@ -42,9 +43,6 @@ export default function PiAppClient() {
             // Add timeout to factor in the user not using Pi Browser
             const auth = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
 
-            // Debug: log the full auth response to see what Pi returns
-            console.log("[Pi.authenticate] Full response:", JSON.stringify(auth, null, 2));
-
             const response = await signIn(auth.accessToken);
 
             if (!response.success) {
@@ -63,18 +61,21 @@ export default function PiAppClient() {
                 (auth as { wallet_address?: string }).wallet_address ??
                 (auth as { wallet?: string }).wallet;
             
-            console.log("[Pi.authenticate] Extracted wallet:", walletFromAuth);
-            console.log("[signIn] Server returned wallet:", userData.wallet);
-            
             const mergedUser = { ...userData, wallet: userData.wallet ?? walletFromAuth };
+            
+            // DEBUG: Show what Pi SDK returned (temporary - remove after testing)
+            const debugData = {
+                "auth keys": Object.keys(auth),
+                "auth.user": authUser ? Object.keys(authUser) : "undefined",
+                "auth.user full": authUser,
+                "walletFromAuth": walletFromAuth ?? "not found",
+                "userData.wallet": userData.wallet ?? "not found",
+                "final wallet": mergedUser.wallet ?? "not found"
+            };
+            setDebugInfo(JSON.stringify(debugData, null, 2));
             setIsLoading(false);
             setUser(mergedUser);
-            if (mergedUser.wallet) {
-                setWalletAddress(mergedUser.wallet);
-                handleStage("claim");
-            } else {
-                handleStage("walletInput");
-            }
+            handleStage("debug");
         } catch (error) {
             console.error("Sign in error:", error);
             setIsLoading(false);
@@ -334,6 +335,31 @@ export default function PiAppClient() {
                                     </a>
                                 )}
                             </div>
+                        </div>
+                    </div>
+                );
+
+            case "debug":
+                return (
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-4 flex flex-col gap-y-4">
+                            <h1 className="text-lg font-bold text-gray-800 text-center">Debug: Pi SDK Response</h1>
+                            <pre className="text-xs bg-gray-100 p-3 rounded-lg overflow-auto max-h-80 whitespace-pre-wrap break-all">
+                                {debugInfo}
+                            </pre>
+                            <p className="text-xs text-gray-500 text-center">
+                                Screenshot this and share it. Then tap Continue.
+                            </p>
+                            <PrimaryButton onClick={() => {
+                                if (user?.wallet) {
+                                    setWalletAddress(user.wallet);
+                                    handleStage("claim");
+                                } else {
+                                    handleStage("walletInput");
+                                }
+                            }}>
+                                Continue
+                            </PrimaryButton>
                         </div>
                     </div>
                 );

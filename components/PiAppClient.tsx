@@ -145,12 +145,15 @@ export default function PiAppClient() {
                                     <p className="font-medium text-gray-700">Get 0.01 Pi in two steps:</p>
                                     <ol className="list-decimal list-inside space-y-1.5 pl-1">
                                         <li>
-                                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account. Your wallet is detected automatically when available.
+                                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account.
                                         </li>
                                         <li>
-                                            <span className="font-semibold text-gray-800">Claim</span> – One tap to receive 0.01 Pi and release your lockups. If your wallet wasn&apos;t detected, you&apos;ll be asked to enter it first.
+                                            <span className="font-semibold text-gray-800">Claim</span> – One tap to receive 0.01 Pi and release your lockups.
                                         </li>
                                     </ol>
+                                    <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                                        You may be asked to enter your wallet address. Have it ready by copying it from Pi Browser → Wallet.
+                                    </p>
                                 </div>
                             </div>
 

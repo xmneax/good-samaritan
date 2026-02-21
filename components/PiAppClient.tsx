@@ -18,20 +18,17 @@ export type Toast = {
 };
 
 export default function PiAppClient() {
-    const [appStage, setAppStage] = useState("welcome"); // welcome, claim, walletInput, success, error, debug
+    const [appStage, setAppStage] = useState("welcome"); // welcome, walletInput, success, error
     const [user, setUser] = useState<User | null>(null);
     const [toast, setToast] = useState<Toast | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
-    const [debugInfo, setDebugInfo] = useState<string>("");
 
     const handleStage = (stage: string) => setAppStage(stage);
 
     const handleLogin = async () => {
         if (user) {
-            const nextStage = user.wallet ? "claim" : "walletInput";
-            if (user.wallet) setWalletAddress(user.wallet);
-            return handleStage(nextStage);
+            return handleStage("walletInput");
         }
 
         try {
@@ -40,7 +37,6 @@ export default function PiAppClient() {
 
             const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Login request timed out. Please try again using the Pi Browser.")), 15000));
 
-            // Add timeout to factor in the user not using Pi Browser
             const auth = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
 
             const response = await signIn(auth.accessToken);
@@ -51,31 +47,9 @@ export default function PiAppClient() {
             }
 
             const userData = response.data as User;
-            
-            // Try multiple possible wallet field locations from Pi SDK
-            const authUser = (auth as { user?: Record<string, unknown> }).user;
-            const walletFromAuth = 
-                authUser?.wallet_address as string | undefined ??
-                authUser?.wallet as string | undefined ??
-                authUser?.walletAddress as string | undefined ??
-                (auth as { wallet_address?: string }).wallet_address ??
-                (auth as { wallet?: string }).wallet;
-            
-            const mergedUser = { ...userData, wallet: userData.wallet ?? walletFromAuth };
-            
-            // DEBUG: Show what Pi SDK returned (temporary - remove after testing)
-            const debugData = {
-                "auth keys": Object.keys(auth),
-                "auth.user": authUser ? Object.keys(authUser) : "undefined",
-                "auth.user full": authUser,
-                "walletFromAuth": walletFromAuth ?? "not found",
-                "userData.wallet": userData.wallet ?? "not found",
-                "final wallet": mergedUser.wallet ?? "not found"
-            };
-            setDebugInfo(JSON.stringify(debugData, null, 2));
             setIsLoading(false);
-            setUser(mergedUser);
-            handleStage("debug");
+            setUser(userData);
+            handleStage("walletInput");
         } catch (error) {
             console.error("Sign in error:", error);
             setIsLoading(false);
@@ -83,27 +57,6 @@ export default function PiAppClient() {
                 type: "error",
                 message: error instanceof Error ? error.message : "An error occurred while signing in. Please try again!",
             });
-        }
-    };
-
-    const handleClaim = async () => {
-        if (!user?.wallet) return;
-        setIsLoading(true);
-        const checkResult = await checkWalletAddress(user.wallet, {
-            piUid: user.uid,
-            piWalletAddress: user.wallet,
-        });
-        if (!checkResult.success) {
-            setIsLoading(false);
-            return setToast({ type: "error", message: checkResult.message });
-        }
-        const txResult = await createTransaction(user.wallet, user.uid);
-        setIsLoading(false);
-        if (txResult.success) {
-            handleStage("success");
-        } else {
-            setToast({ type: "error", message: txResult.message });
-            handleStage("error");
         }
     };
 
@@ -156,17 +109,20 @@ export default function PiAppClient() {
                                     Need 0.01 Pi to move your lockups? We&#39;ve got you covered.
                                 </p>
                                 <div className="space-y-2 text-left w-full max-w-sm text-sm text-gray-600">
-                                    <p className="font-medium text-gray-700">Get 0.01 Pi in two steps:</p>
+                                    <p className="font-medium text-gray-700">Get 0.01 Pi in three steps:</p>
                                     <ol className="list-decimal list-inside space-y-1.5 pl-1">
                                         <li>
                                             <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account.
                                         </li>
                                         <li>
-                                            <span className="font-semibold text-gray-800">Claim</span> – One tap to receive 0.01 Pi and release your lockups.
+                                            <span className="font-semibold text-gray-800">Paste wallet</span> – Enter your Pi wallet address.
+                                        </li>
+                                        <li>
+                                            <span className="font-semibold text-gray-800">Claim</span> – Receive 0.01 Pi and release your lockups.
                                         </li>
                                     </ol>
                                     <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                                        You may be asked to enter your wallet address to ensure the Pi reaches you. Have it ready from Pi Browser → Wallet. Please note: this is a one-time help only.
+                                        Have your wallet address ready: Pi Browser → Wallet → copy address. This is a one-time help only.
                                     </p>
                                 </div>
                             </div>
@@ -178,47 +134,6 @@ export default function PiAppClient() {
                                         {isLoading ? "Signing in..." : "Login with Pi Network"}
                                     </div>
                                 </PrimaryButton>
-                                <SecondaryButton disabled={isLoading}>
-                                    <Link href="/" className="block">Cancel</Link>
-                                </SecondaryButton>
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case "claim":
-                return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
-                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col gap-y-8">
-                            <div className="flex flex-col items-center gap-y-2 text-center">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Claim 0.01 Pi</h1>
-                                <p className="text-gray-600 text-sm">
-                                    Sending to your Pi wallet
-                                </p>
-                                {user?.wallet && (
-                                    <p className="text-gray-500 font-mono text-xs break-all px-2">
-                                        {user.wallet.slice(0, 12)}...{user.wallet.slice(-8)}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="w-full flex flex-col gap-4 max-w-[280px]">
-                                <PrimaryButton onClick={handleClaim} disabled={isLoading}>
-                                    <div className="flex items-center justify-center gap-2">
-                                        {isLoading && <Loader2 size={20} className="animate-spin" />}
-                                        {isLoading ? "Sending..." : "Claim"}
-                                    </div>
-                                </PrimaryButton>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setWalletAddress("");
-                                        handleStage("walletInput");
-                                    }}
-                                    className="text-sm text-violet-600 hover:text-violet-700 underline"
-                                >
-                                    Use different wallet
-                                </button>
                                 <SecondaryButton disabled={isLoading}>
                                     <Link href="/" className="block">Cancel</Link>
                                 </SecondaryButton>
@@ -335,31 +250,6 @@ export default function PiAppClient() {
                                     </a>
                                 )}
                             </div>
-                        </div>
-                    </div>
-                );
-
-            case "debug":
-                return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
-                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-4 flex flex-col gap-y-4">
-                            <h1 className="text-lg font-bold text-gray-800 text-center">Debug: Pi SDK Response</h1>
-                            <pre className="text-xs bg-gray-100 p-3 rounded-lg overflow-auto max-h-80 whitespace-pre-wrap break-all">
-                                {debugInfo}
-                            </pre>
-                            <p className="text-xs text-gray-500 text-center">
-                                Screenshot this and share it. Then tap Continue.
-                            </p>
-                            <PrimaryButton onClick={() => {
-                                if (user?.wallet) {
-                                    setWalletAddress(user.wallet);
-                                    handleStage("claim");
-                                } else {
-                                    handleStage("walletInput");
-                                }
-                            }}>
-                                Continue
-                            </PrimaryButton>
                         </div>
                     </div>
                 );

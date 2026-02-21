@@ -42,6 +42,9 @@ export default function PiAppClient() {
             // Add timeout to factor in the user not using Pi Browser
             const auth = await Promise.race([window.Pi.authenticate(scopes, onIncompletePaymentFound), timeout]);
 
+            // Debug: log the full auth response to see what Pi returns
+            console.log("[Pi.authenticate] Full response:", JSON.stringify(auth, null, 2));
+
             const response = await signIn(auth.accessToken);
 
             if (!response.success) {
@@ -50,9 +53,19 @@ export default function PiAppClient() {
             }
 
             const userData = response.data as User;
-            const walletFromAuth =
-                (auth as { user?: { wallet_address?: string; wallet?: string } }).user?.wallet_address ??
-                (auth as { user?: { wallet_address?: string; wallet?: string } }).user?.wallet;
+            
+            // Try multiple possible wallet field locations from Pi SDK
+            const authUser = (auth as { user?: Record<string, unknown> }).user;
+            const walletFromAuth = 
+                authUser?.wallet_address as string | undefined ??
+                authUser?.wallet as string | undefined ??
+                authUser?.walletAddress as string | undefined ??
+                (auth as { wallet_address?: string }).wallet_address ??
+                (auth as { wallet?: string }).wallet;
+            
+            console.log("[Pi.authenticate] Extracted wallet:", walletFromAuth);
+            console.log("[signIn] Server returned wallet:", userData.wallet);
+            
             const mergedUser = { ...userData, wallet: userData.wallet ?? walletFromAuth };
             setIsLoading(false);
             setUser(mergedUser);

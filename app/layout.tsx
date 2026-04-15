@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-const SITE_URL = "https://dsamaritan.gdsam.online";
+const SITE_URL = "https://goodsamaritan.gdsam.online";
 const SOCIAL_IMAGE_URL = `${SITE_URL}/good-samaritan-intro.png`;
 
 export const metadata: Metadata = {

@@ -98,9 +98,17 @@ export default function PiAppClient() {
             case "welcome":
                 return (
                     <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
-                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
-                            <div className="relative rounded-2xl overflow-hidden ring-2 ring-violet-100">
-                                <Image src={"/good-samaritan-intro.png"} alt={"Good Samaritan rescue illustration"} width={96} height={96} className="rounded-2xl" />
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-6 sm:p-8 flex flex-col items-center gap-y-8">
+                            <div className="relative rounded-2xl overflow-hidden ring-2 ring-violet-100 w-full max-w-sm">
+                                <Image
+                                    src={"/good-samaritan-intro.png"}
+                                    alt={"Good Samaritan rescue illustration"}
+                                    width={1024}
+                                    height={1024}
+                                    priority
+                                    sizes="(max-width: 640px) calc(100vw - 80px), 384px"
+                                    className="rounded-2xl w-full h-auto object-cover"
+                                />
                             </div>
 
                             <div className="flex flex-col items-center gap-y-4 text-center">
@@ -108,23 +116,6 @@ export default function PiAppClient() {
                                 <p className="text-gray-600 text-base leading-relaxed max-w-sm">
                                     Need 0.01 Pi to move your lockups? We&#39;ve got you covered.
                                 </p>
-                                <div className="space-y-2 text-left w-full max-w-sm text-sm text-gray-600">
-                                    <p className="font-medium text-gray-700">Get 0.01 Pi in three steps:</p>
-                                    <ol className="list-decimal list-inside space-y-1.5 pl-1">
-                                        <li>
-                                            <span className="font-semibold text-gray-800">Login</span> – Connect your Pi account.
-                                        </li>
-                                        <li>
-                                            <span className="font-semibold text-gray-800">Paste wallet</span> – Enter your Pi wallet address.
-                                        </li>
-                                        <li>
-                                            <span className="font-semibold text-gray-800">Claim</span> – Receive 0.01 Pi and release your lockups.
-                                        </li>
-                                    </ol>
-                                    <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                                        Have your wallet address ready: Pi Browser → Wallet → copy address. This is a one-time help only.
-                                    </p>
-                                </div>
                             </div>
 
                             <div className="w-full flex flex-col gap-4 max-w-[280px]">

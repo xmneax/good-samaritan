@@ -17,8 +17,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://goodsamaritan3995.pinet.com"),
     title: "Good Samaritan",
     description: "Good Samaritan App for Pi Network",
+    openGraph: {
+        title: "Good Samaritan",
+        description: "Good Samaritan App for Pi Network",
+        images: [
+            {
+                url: "/good-samaritan-intro.png",
+                width: 1024,
+                height: 1024,
+                alt: "Good Samaritan rescue illustration",
+            },
+        ],
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Good Samaritan",
+        description: "Good Samaritan App for Pi Network",
+        images: ["/good-samaritan-intro.png"],
+    },
 };
 
 export default function RootLayout({

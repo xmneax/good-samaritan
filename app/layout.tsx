@@ -16,8 +16,11 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
+const SITE_URL = "https://dsamaritan.gdsam.online";
+const SOCIAL_IMAGE_URL = `${SITE_URL}/good-samaritan-intro.png`;
+
 export const metadata: Metadata = {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://goodsamaritan3995.pinet.com"),
+    metadataBase: new URL(SITE_URL),
     title: "Good Samaritan",
     description: "Good Samaritan App for Pi Network",
     openGraph: {
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
         description: "Good Samaritan App for Pi Network",
         images: [
             {
-                url: "/good-samaritan-intro.png",
+                url: SOCIAL_IMAGE_URL,
                 width: 1024,
                 height: 1024,
                 alt: "Good Samaritan rescue illustration",
@@ -37,7 +40,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Good Samaritan",
         description: "Good Samaritan App for Pi Network",
-        images: ["/good-samaritan-intro.png"],
+        images: [SOCIAL_IMAGE_URL],
     },
 };
 

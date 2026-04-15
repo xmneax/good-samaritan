@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Good Samaritan rescue illustration</title>
+  <desc id="desc">A stylized rescue scene with a helper pulling a person from water, in a violet color palette.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ede9fe"/>
+      <stop offset="100%" stop-color="#ddd6fe"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+    <clipPath id="cardClip">
+      <rect x="20" y="40" width="472" height="432" rx="64" ry="64"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" fill="#0f172a"/>
+  <g clip-path="url(#cardClip)">
+    <rect x="20" y="40" width="472" height="432" rx="64" ry="64" fill="url(#bg)"/>
+
+    <!-- sky and clouds -->
+    <rect x="20" y="40" width="472" height="170" fill="#7c3aed"/>
+    <ellipse cx="130" cy="180" rx="120" ry="55" fill="#f8fafc"/>
+    <ellipse cx="275" cy="175" rx="150" ry="60" fill="#f8fafc"/>
+    <ellipse cx="410" cy="165" rx="110" ry="52" fill="#f8fafc"/>
+
+    <!-- rain strokes -->
+    <g stroke="#c4b5fd" stroke-width="8" stroke-linecap="round" opacity="0.85">
+      <line x1="120" y1="86" x2="108" y2="107"/>
+      <line x1="160" y1="92" x2="146" y2="117"/>
+      <line x1="212" y1="82" x2="197" y2="112"/>
+      <line x1="267" y1="90" x2="251" y2="119"/>
+      <line x1="318" y1="86" x2="303" y2="114"/>
+      <line x1="364" y1="93" x2="350" y2="119"/>
+    </g>
+
+    <!-- distant house -->
+    <polygon points="58,180 112,138 165,180" fill="#4c1d95"/>
+    <rect x="72" y="178" width="88" height="38" fill="#5b21b6"/>
+    <rect x="83" y="188" width="26" height="28" fill="#f8fafc"/>
+
+    <!-- helper and rescued person -->
+    <g>
+      <!-- rescued person -->
+      <circle cx="295" cy="286" r="28" fill="#f8fafc"/>
+      <path d="M250 320c22-28 76-30 104 0l-24 53h-93z" fill="#e2e8f0"/>
+      <path d="M252 328c35 10 70 10 103 0l-10 21c-28 9-56 9-84 0z" fill="#cbd5e1"/>
+
+      <!-- helper -->
+      <circle cx="195" cy="276" r="27" fill="#f8fafc"/>
+      <path d="M145 314c19-36 80-38 109 0l21 53H131z" fill="#7c3aed"/>
+      <path d="M232 292l26 18-34 27-18-15z" fill="#5b21b6"/>
+      <path d="M254 306l48-22 13 18-51 27z" fill="#4c1d95"/>
+
+      <!-- handshake -->
+      <path d="M220 318c12-11 23-17 35-18 14-1 25 6 33 19l-16 13c-5-8-10-12-17-11-6 1-14 6-22 14z" fill="#f8fafc"/>
+    </g>
+
+    <!-- mother and child in boat -->
+    <g>
+      <ellipse cx="365" cy="224" rx="79" ry="33" fill="#6d28d9"/>
+      <circle cx="352" cy="192" r="17" fill="#f8fafc"/>
+      <path d="M327 221c7-18 43-18 51 0l-7 26h-38z" fill="#8b5cf6"/>
+      <circle cx="306" cy="204" r="13" fill="#f8fafc"/>
+      <path d="M289 227c6-13 30-13 37 0l-4 20h-29z" fill="#a78bfa"/>
+    </g>
+
+    <!-- water -->
+    <path d="M20 308c44-27 97-22 143 2 50 25 93 25 142 2 42-20 90-24 133-4 18 8 36 19 54 32v132H20z" fill="url(#water)"/>
+    <path d="M20 340c45-26 96-22 144 3 50 27 93 26 142 2 44-21 90-24 132-4 19 8 37 19 54 32" fill="none" stroke="#f5f3ff" stroke-width="12" stroke-linecap="round"/>
+    <path d="M20 375c44-23 93-20 139 2 52 25 98 25 147 2 42-20 87-22 126-4 20 8 39 20 60 35" fill="none" stroke="#ddd6fe" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <rect x="20" y="40" width="472" height="432" rx="64" ry="64" fill="none" stroke="#1e1b4b" stroke-width="10"/>
+</svg>

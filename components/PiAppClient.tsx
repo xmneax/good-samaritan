@@ -97,8 +97,8 @@ export default function PiAppClient() {
         switch (appStage) {
             case "welcome":
                 return (
-                    <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
-                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-6 sm:p-8 flex flex-col items-center gap-y-8">
+                    <div className="w-full max-w-md flex flex-col justify-center items-center p-4 sm:p-6">
+                        <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-5 sm:p-8 flex flex-col items-center gap-y-6 sm:gap-y-8">
                             <div className="relative rounded-2xl overflow-hidden ring-2 ring-violet-100 w-full max-w-sm">
                                 <Image
                                     src={"/good-samaritan-intro.png"}
@@ -106,19 +106,19 @@ export default function PiAppClient() {
                                     width={1024}
                                     height={1024}
                                     priority
-                                    sizes="(max-width: 640px) calc(100vw - 80px), 384px"
+                                    sizes="(max-width: 640px) calc(100vw - 72px), 384px"
                                     className="rounded-2xl w-full h-auto object-cover"
                                 />
                             </div>
 
-                            <div className="flex flex-col items-center gap-y-4 text-center">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Welcome, Pioneer!</h1>
+                            <div className="flex flex-col items-center gap-y-3 text-center">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">Welcome, Pioneer!</h1>
                                 <p className="text-gray-600 text-base leading-relaxed max-w-sm">
                                     Need 0.01 Pi to move your lockups? We&#39;ve got you covered.
                                 </p>
                             </div>
 
-                            <div className="w-full flex flex-col gap-4 max-w-[280px]">
+                            <div className="w-full flex flex-col gap-3 max-w-sm">
                                 <PrimaryButton onClick={handleLogin} disabled={isLoading}>
                                     <div className="flex items-center justify-center gap-2">
                                         {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Wallet size={20} />}

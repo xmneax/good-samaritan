@@ -100,7 +100,7 @@ export default function PiAppClient() {
                     <div className="w-full max-w-md flex flex-col justify-center items-center p-6">
                         <div className="w-full bg-white rounded-2xl shadow-xl shadow-violet-100/50 p-8 flex flex-col items-center gap-y-8">
                             <div className="relative rounded-2xl overflow-hidden ring-2 ring-violet-100">
-                                <Image src={"/good-samaritan-intro-violet.svg"} alt={"Good Samaritan rescue illustration"} width={96} height={96} className="rounded-2xl" />
+                                <Image src={"/good-samaritan-intro.png"} alt={"Good Samaritan rescue illustration"} width={96} height={96} className="rounded-2xl" />
                             </div>
 
                             <div className="flex flex-col items-center gap-y-4 text-center">
